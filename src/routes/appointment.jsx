@@ -161,14 +161,14 @@ export default function AppointmentComponent() {
     
     return (
         <>
-        <div style={styles.container}>
+            <div className="bg-cyan-600/60  w-3xl p-5 m-5 ml-auto mr-auto rounded-md items-center grid grid-rows-2  ">
             <h2>Appointment Management</h2>
             <p>
                 Schedule, view, update, and cancel patient appointments with doctors.
             </p>
 
             {/* Search Appointments by Patient ID */}
-            <div style={styles.section}>
+            <div className="max-w-md mx-auto p-6 bg-purple-50 rounded-2xl shadow-lg">
                     <h3 className="pb-2 ">Search Appointments by Patient ID</h3>
                 <input
                     type="number"
@@ -183,7 +183,7 @@ export default function AppointmentComponent() {
             </div>
 
             {/* Add New Appointment */}
-            <div style={styles.section}>
+            <div className="max-w-md mx-auto p-6 bg-purple-50 rounded-2xl shadow-lg">
                 <h3>Add New Appointment</h3>
                 <form onSubmit={addAppointment} style={styles.form}>
                     <input
@@ -265,7 +265,7 @@ export default function AppointmentComponent() {
             <div>
                 {/* Edit Appointment Form */}
             {editAppointment && (
-                <div style={styles.section}>
+                <div className="max-w-md mx-auto p-6 bg-purple-50 rounded-2xl shadow-lg">
                     <h3>Edit Appointment (ID: {editAppointment.id})</h3>
                     <form onSubmit={updateAppointment} style={styles.form}>
                         <input
@@ -310,7 +310,7 @@ export default function AppointmentComponent() {
             </div>
 
             {/* All Appointments List */}
-            <div style={styles.section}>
+            <div className="max-w-md mx-auto p-6 bg-purple-50 rounded-2xl shadow-lg">
                 <h3>All Appointments</h3>
                 {appointments.length > 0 ? (
                     <table style={styles.table}>
