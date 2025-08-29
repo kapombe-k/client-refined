@@ -1,8 +1,9 @@
 import { Toast } from "@base-ui-components/react";
 import axios from "axios";
+import { BASE_URL } from "@/utils/utils";
 
 const API = axios.create({
-    baseURL: "http://localhost:5000/api/v1",
+    baseURL: BASE_URL,
     withCredentials: true,
 });
 
