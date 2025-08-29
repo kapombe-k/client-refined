@@ -161,7 +161,7 @@ export default function AppointmentComponent() {
     
     return (
         <>
-            <div className="bg-cyan-600/60  w-3xl p-5 m-5 ml-auto mr-auto rounded-md items-center grid grid-rows-2  ">
+        <div style={styles.container}>
             <h2>Appointment Management</h2>
             <p>
                 Schedule, view, update, and cancel patient appointments with doctors.
@@ -169,15 +169,19 @@ export default function AppointmentComponent() {
 
             {/* Search Appointments by Patient ID */}
             <div className="max-w-md mx-auto p-6 bg-purple-50 rounded-2xl shadow-lg">
-                    <h3 className="pb-2 ">Search Appointments by Patient ID</h3>
+                    <h3 className="text-2xl font-bold text-purple-800 mb-6">Search Appointments by Patient ID</h3>
                 <input
                     type="number"
                     placeholder="Patient ID"
                     value={searchPatientId}
                     onChange={(e) => setSearchPatientId(e.target.value)}
-                        className="border text-purple-600 hover:border-purple-900 hover:bg-purple-600 hover:text-white active:bg-purple-700 rounded-lg p-3 w-xs"
+                        className="w-full p-4 border-2 border-purple-200 rounded-xl bg-white text-purple-700 
+                    hover:border-purple-300 hover:bg-purple-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 
+                    transition-all duration-200"
                 />
-                    <button onClick={searchAppointmentsByPatient} className="border text-purple-600 hover:border-purple-900 hover:bg-purple-600 hover:text-white active:bg-purple-700 rounded-lg p-3 w-xs">
+                    <button onClick={searchAppointmentsByPatient} className="w-full p-4 bg-purple-600 text-white font-medium rounded-xl 
+                  hover:bg-purple-700 active:bg-purple-800 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2
+                  transition-all duration-200 shadow-md hover:shadow-lg">
                     Search Appointments
                 </button>
             </div>
@@ -192,7 +196,9 @@ export default function AppointmentComponent() {
                         value={newAppointment.date}
                         onChange={handleNewAppointmentChange}
                         required
-                        style={styles.input}
+                        className="w-full p-4 border-2 border-purple-200 rounded-xl bg-white text-purple-700 
+                    hover:border-purple-300 hover:bg-purple-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 
+                    transition-all duration-200"
                     />
                     <input
                         type="number"
@@ -201,7 +207,9 @@ export default function AppointmentComponent() {
                         value={newAppointment.patient_id}
                         onChange={handleNewAppointmentChange}
                         required
-                        style={styles.input}
+                        className="w-full p-4 border-2 border-purple-200 rounded-xl bg-white text-purple-700 
+                    hover:border-purple-300 hover:bg-purple-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 
+                    transition-all duration-200"
                     />
                     <input
                         type="number"
@@ -210,9 +218,13 @@ export default function AppointmentComponent() {
                         value={newAppointment.doctor_id}
                         onChange={handleNewAppointmentChange}
                         required
-                        style={styles.input}
+                        className="w-full p-4 border-2 border-purple-200 rounded-xl bg-white text-purple-700 
+                    hover:border-purple-300 hover:bg-purple-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 
+                    transition-all duration-200"
                     />
-                    <button type="submit" style={styles.button}>
+                        <button type="submit" className="w-full p-4 bg-purple-600 text-white font-medium rounded-xl 
+                  hover:bg-purple-700 active:bg-purple-800 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2
+                  transition-all duration-200 shadow-md hover:shadow-lg">
                         Add Appointment
                     </button>
                 </form>
@@ -274,7 +286,9 @@ export default function AppointmentComponent() {
                             value={editAppointment.date}
                             onChange={handleEditAppointmentChange}
                             required
-                            style={styles.input}
+                            className="w-full p-4 border-2 border-purple-200 rounded-xl bg-white text-purple-700 
+                    hover:border-purple-300 hover:bg-purple-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 
+                    transition-all duration-200"
                         />
                         <input
                             type="number"
@@ -283,7 +297,9 @@ export default function AppointmentComponent() {
                             value={editAppointment.patient_id}
                             onChange={handleEditAppointmentChange}
                             required
-                            style={styles.input}
+                            className="w-full p-4 border-2 border-purple-200 rounded-xl bg-white text-purple-700 
+                    hover:border-purple-300 hover:bg-purple-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 
+                    transition-all duration-200"
                         />
                         <input
                             type="number"
@@ -292,7 +308,9 @@ export default function AppointmentComponent() {
                             value={editAppointment.doctor_id}
                             onChange={handleEditAppointmentChange}
                             required
-                            style={styles.input}
+                            className="w-full p-4 border-2 border-purple-200 rounded-xl bg-white text-purple-700 
+                    hover:border-purple-300 hover:bg-purple-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 
+                    transition-all duration-200"
                         />
                         <button type="submit" style={styles.button}>
                             Update Appointment
