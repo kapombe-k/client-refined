@@ -11,6 +11,16 @@ export const getDoctors = async () => {
     }
 };
 
+export const getDoctor = async (doctorId) => {
+    try {
+        const response = await axios.get(`${BASE_URL}/doctors/${doctorId}`, { withCredentials: true });
+        return response.data;
+    } catch (error) {
+        console.error("Get doctor error:", error);
+        throw error;
+    }
+};
+
 export const createDoctor = async (data) => {
     try {
         const response = await axios.post(`${BASE_URL}/doctors`, data, { withCredentials: true });
