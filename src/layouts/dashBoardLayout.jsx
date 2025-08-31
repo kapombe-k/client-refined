@@ -11,7 +11,7 @@ const Sidebar = () => {
             <nav>
                 <ul className="space-y-2">
                     <li><Link to="/">Dashboard</Link></li>
-                    <RoleGate roles={["admin", "receptionist", "doctor"]}>
+                    <RoleGate roles={["admin", "receptionist", "doctor", "patient"]}>
                         <li><Link to="/patients">Patients</Link></li>
                     </RoleGate>
                     <RoleGate roles={["admin", "receptionist", "doctor", "patient"]}>
