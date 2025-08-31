@@ -1,18 +1,8 @@
-import PatientComponent from "./routes/patients";
-import VisitsComponent from "./routes/visits";
-import AppointmentComponent from "./routes/appointment";
-import DoctorComponent from "./routes/doctors";
+import React from 'react';
+import AppRoutes from './routes/AppRoutes';
 
 function App() {
-
-  return (
-    <>
-      <PatientComponent />
-      <DoctorComponent />
-      <VisitsComponent />
-      <AppointmentComponent />
-    </>
-  );
+  return <AppRoutes />;
 }
 
 export default App;
