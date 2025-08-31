@@ -2,20 +2,20 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { createResource, updateResource, deleteResource } from '../api/resourceApi';
+import { createResource, updateResource, deleteResource } from '../api-calls/resources';
 import { toast } from 'react-toastify';
 import {
     Dialog,
-    DialogTrigger,
     DialogContent,
     DialogHeader,
     DialogTitle,
     DialogFooter,
+    DialogTrigger,
     DialogClose,
-    DialogDescription
-} from './ui/dialog';
+} from './dialog';
 
-const ResourceDialog = ({ resource, operation = 'create', initialData = {}, id }) => {
+const Modal = ({ resource, operation = 'create', initialData = {}, id, onSuccess }) => {
+    const [open, setOpen] = useState(false);
     const schema = yup.object().shape({
         name: yup.string().required(),
         // Add more fields as needed per resource
@@ -38,6 +38,8 @@ const ResourceDialog = ({ resource, operation = 'create', initialData = {}, id }
                 toast.success('Deleted successfully!');
             }
             reset();
+            setOpen(false);
+            onSuccess?.();
         } catch {
             toast.error(`Failed to ${operation}!`);
         }
@@ -49,7 +51,7 @@ const ResourceDialog = ({ resource, operation = 'create', initialData = {}, id }
     else if (operation === 'delete') title = `Delete ${resource}`;
 
     return (
-        <Dialog>
+        <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
                 <button className={`mb-4 px-4 py-2 ${operation === 'delete' ? 'bg-red-600' : operation === 'update' ? 'bg-yellow-600' : 'bg-green-600'} text-white rounded`}>
                     {operation === 'create' && 'Add New'}
@@ -57,12 +59,9 @@ const ResourceDialog = ({ resource, operation = 'create', initialData = {}, id }
                     {operation === 'delete' && 'Delete'}
                 </button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="w-full max-w-md">
                 <DialogHeader>
                     <DialogTitle>{title}</DialogTitle>
-                    <DialogDescription>
-                        {operation === 'delete' ? `Are you sure you want to delete this ${resource}?` : null}
-                    </DialogDescription>
                 </DialogHeader>
                 {(operation === 'create' || operation === 'update') && (
                     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -72,24 +71,27 @@ const ResourceDialog = ({ resource, operation = 'create', initialData = {}, id }
                             {errors.name && <span className="text-red-500">{errors.name.message}</span>}
                         </div>
                         <DialogFooter>
-                            <button type="submit" className="w-full py-2 bg-blue-600 text-white rounded">{operation === 'create' ? 'Create' : 'Update'}</button>
                             <DialogClose asChild>
-                                <button type="button" className="w-full py-2 mt-2 bg-gray-300 rounded">Cancel</button>
+                                <button type="button" className="px-4 py-2 bg-gray-300 rounded">Cancel</button>
                             </DialogClose>
+                            <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded">{operation === 'create' ? 'Create' : 'Update'}</button>
                         </DialogFooter>
                     </form>
                 )}
                 {operation === 'delete' && (
-                    <DialogFooter>
-                        <button onClick={onSubmit} className="w-full py-2 bg-red-600 text-white rounded">Delete</button>
-                        <DialogClose asChild>
-                            <button type="button" className="w-full py-2 bg-gray-300 rounded">Cancel</button>
-                        </DialogClose>
-                    </DialogFooter>
+                    <div>
+                        <p>Are you sure you want to delete this {resource}?</p>
+                        <DialogFooter>
+                            <DialogClose asChild>
+                                <button className="px-4 py-2 bg-gray-300 rounded">Cancel</button>
+                            </DialogClose>
+                            <button onClick={onSubmit} className="px-4 py-2 bg-red-600 text-white rounded">Delete</button>
+                        </DialogFooter>
+                    </div>
                 )}
             </DialogContent>
         </Dialog>
     );
 };
 
-export default ResourceDialog;
+export default Modal;

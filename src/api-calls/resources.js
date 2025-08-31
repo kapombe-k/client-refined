@@ -1,19 +1,19 @@
 import axios from "axios";
 import { BASE_URL } from "@/utils/utils";
 
-export const getResources = async (resourceId) => {
+export const getResource = async (resource) => {
     try {
-        const response = await axios.get(`${BASE_URL}/resources/${resourceId}`, { withCredentials: true });
+        const response = await axios.get(`${BASE_URL}/${resource}`, { withCredentials: true });
         return response.data;
     } catch (error) {
-        console.error("Get resources error:", error);
+        console.error("Get resource error:", error);
         throw error;
     }
 };
 
-export const createResource = async (data) => {
+export const createResource = async (resource, data) => {
     try {
-        const response = await axios.post(`${BASE_URL}/resources`, data, { withCredentials: true });
+        const response = await axios.post(`${BASE_URL}/${resource}`, data, { withCredentials: true });
         return response.data;
     } catch (error) {
         console.error("Create resource error:", error);
@@ -21,9 +21,9 @@ export const createResource = async (data) => {
     }
 };
 
-export const updateResource = async (resourceId, data) => {
+export const updateResource = async (resource, id, data) => {
     try {
-        const response = await axios.put(`${BASE_URL}/resources/${resourceId}`, data, { withCredentials: true });
+        const response = await axios.put(`${BASE_URL}/${resource}/${id}`, data, { withCredentials: true });
         return response.data;
     } catch (error) {
         console.error("Update resource error:", error);
@@ -31,9 +31,9 @@ export const updateResource = async (resourceId, data) => {
     }
 };
 
-export const deleteResource = async (resourceId) => {
+export const deleteResource = async (resource, id) => {
     try {
-        const response = await axios.delete(`${BASE_URL}/resources/${resourceId}`, { withCredentials: true });
+        const response = await axios.delete(`${BASE_URL}/${resource}/${id}`, { withCredentials: true });
         return response.data;
     } catch (error) {
         console.error("Delete resource error:", error);
