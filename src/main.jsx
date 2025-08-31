@@ -3,8 +3,8 @@ import { BrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ToastContainer } from 'react-toastify';
 import App from './App';
-import './styles/tailwind.css';
-import 'react-toastify/dist/ReactToastify.css';
+// import './styles/tailwind.css';
+// import 'react-toastify/dist/ReactToastify.css';
 
 const queryClient = new QueryClient();
 
