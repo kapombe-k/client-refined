@@ -1,6 +1,6 @@
 import { Toast } from "@base-ui-components/react";
 import axios from "axios";
-import { BASE_URL } from "@/utils/utils";
+import { BASE_URL } from "../utils/utils";
 
 const API = axios.create({
     baseURL: BASE_URL,

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import DashboardLayout from '../layouts/DashboardLayout';
-import DataTable from '../components/DataTable';
-import SearchForm from '../components/SearchForm';
-import Modal from '../components/Modal';
+import DashboardLayout from '../layouts/dashBoardLayout';
+import DataTable from '../components/ui/Datatable';
+import SearchForm from '../components/ui/SearchForm';
+import Modal from '../components/ui/modal';
 
 const Patients = () => {
     const [searchParams, setSearchParams] = useState({});
@@ -16,7 +16,7 @@ const Patients = () => {
 
     return (
         <DashboardLayout>
-            <h2 className="text-xl font-bold mb-4">Patients</h2>
+            <h2 className="text-xl font-bold mb-4 text-foreground">Patients</h2>
             <SearchForm resource="patients" onSearch={handleSearch} />
             <DataTable resource="patients" searchParams={searchParams} />
             <Modal resource="patients" operation="create" />

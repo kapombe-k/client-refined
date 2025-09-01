@@ -3,19 +3,29 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
-import { getResource } from '../api-calls/resources';
-import { searchPatients } from '../api-calls/patients';
-import { searchAppointments } from '../api-calls/appointments';
-import { searchDoctors } from '../api-calls/doctors';
-import Loader from './Loader';
+import { getResource } from '../../api-calls/resources';
+import { searchPatients } from '../../api-calls/patients';
+import { searchAppointments } from '../../api-calls/appointments';
+import { searchDoctors } from '../../api-calls/doctors';
+import Loader from './loader';
 import { toast } from 'react-toastify';
-import Modal from './Modal';
+import Modal from './modal';
 
 const ActionCellRenderer = ({ data, onEdit, onDelete }) => {
     return (
         <div>
-            <button onClick={() => onEdit(data)} className="mr-2 px-2 py-1 bg-blue-500 text-white rounded">Edit</button>
-            <button onClick={() => onDelete(data.id)} className="px-2 py-1 bg-red-500 text-white rounded">Delete</button>
+            <button
+                onClick={() => onEdit(data)}
+                className="mr-2 px-2 py-1 bg-primary text-primary-foreground rounded hover:bg-primary/90 transition-colors"
+            >
+                Edit
+            </button>
+            <button
+                onClick={() => onDelete(data.id)}
+                className="px-2 py-1 bg-destructive text-destructive-foreground rounded hover:bg-destructive/90 transition-colors"
+            >
+                Delete
+            </button>
         </div>
     );
 };
@@ -92,10 +102,10 @@ const DataTable = ({ resource, searchParams = {} }) => {
     if (isLoading) return <Loader />;
     if (error) {
         toast.error('Failed to load data');
-        return <div className="text-red-500">Error loading data</div>;
+        return <div className="text-destructive p-4 bg-destructive/10 rounded-lg border border-destructive/20">Error loading data</div>;
     }
 
-    if (!tableData || !tableData.length) return <div>No records found.</div>;
+    if (!tableData || !tableData.length) return <div className="text-muted-foreground p-4 bg-muted/50 rounded-lg">No records found.</div>;
 
     return (
         <div className="ag-theme-alpine" style={{ height: 400, width: '100%' }}>

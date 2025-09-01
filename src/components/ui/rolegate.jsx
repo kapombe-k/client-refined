@@ -1,4 +1,4 @@
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from '../../hooks/useauth';
 
 const RoleGate = ({ roles, children, fallback = null }) => {
     const { hasRole } = useAuth();

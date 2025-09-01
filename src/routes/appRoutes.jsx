@@ -1,14 +1,14 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import Dashboard from '../pages/Dashboard';
-import Patients from '../pages/Patients';
-import Appointments from '../pages/Appointments';
-import Inventory from '../pages/Inventory';
-import Billing from '../pages/Billing';
-import Analytics from '../pages/Analytics';
-import Login from '../pages/Login';
-import Register from '../pages/Register';
-import PrivateRoute from './PrivateRoute';
+import Dashboard from '../pages/dashboard';
+import Patients from '../pages/patients';
+import Appointments from '../pages/appointment';
+import Inventory from '../pages/inventory';
+import Billing from '../pages/billing';
+import Analytics from '../pages/analytics';
+import Login from '../pages/login';
+import Register from '../pages/register';
+import PrivateRoute from './privateRoutes';
 
 const AppRoutes = () => (
     <Routes>

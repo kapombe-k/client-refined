@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { createResource, updateResource, deleteResource } from '../api-calls/resources';
+import { createResource, updateResource, deleteResource } from '../../api-calls/resources';
 import { toast } from 'react-toastify';
 import {
     Dialog,
@@ -53,7 +53,13 @@ const Modal = ({ resource, operation = 'create', initialData = {}, id, onSuccess
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <button className={`mb-4 px-4 py-2 ${operation === 'delete' ? 'bg-red-600' : operation === 'update' ? 'bg-yellow-600' : 'bg-green-600'} text-white rounded`}>
+                <button className={`mb-4 px-4 py-2 rounded transition-colors ${
+                    operation === 'delete'
+                        ? 'bg-destructive text-destructive-foreground hover:bg-destructive/90'
+                        : operation === 'update'
+                        ? 'bg-primary text-primary-foreground hover:bg-primary/90'
+                        : 'bg-primary text-primary-foreground hover:bg-primary/90'
+                }`}>
                     {operation === 'create' && 'Add New'}
                     {operation === 'update' && 'Edit'}
                     {operation === 'delete' && 'Delete'}
@@ -66,26 +72,26 @@ const Modal = ({ resource, operation = 'create', initialData = {}, id, onSuccess
                 {(operation === 'create' || operation === 'update') && (
                     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                         <div>
-                            <label className="block mb-1">Name</label>
-                            <input {...register('name')} className="w-full border px-3 py-2 rounded" />
-                            {errors.name && <span className="text-red-500">{errors.name.message}</span>}
+                            <label className="block mb-1 text-foreground">Name</label>
+                            <input {...register('name')} className="w-full border border-input bg-background px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring" />
+                            {errors.name && <span className="text-destructive">{errors.name.message}</span>}
                         </div>
                         <DialogFooter>
                             <DialogClose asChild>
-                                <button type="button" className="px-4 py-2 bg-gray-300 rounded">Cancel</button>
+                                <button type="button" className="px-4 py-2 bg-secondary text-secondary-foreground rounded hover:bg-secondary/80 transition-colors">Cancel</button>
                             </DialogClose>
-                            <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded">{operation === 'create' ? 'Create' : 'Update'}</button>
+                            <button type="submit" className="px-4 py-2 bg-primary text-primary-foreground rounded hover:bg-primary/90 transition-colors">{operation === 'create' ? 'Create' : 'Update'}</button>
                         </DialogFooter>
                     </form>
                 )}
                 {operation === 'delete' && (
                     <div>
-                        <p>Are you sure you want to delete this {resource}?</p>
+                        <p className="text-foreground">Are you sure you want to delete this {resource}?</p>
                         <DialogFooter>
                             <DialogClose asChild>
-                                <button className="px-4 py-2 bg-gray-300 rounded">Cancel</button>
+                                <button className="px-4 py-2 bg-secondary text-secondary-foreground rounded hover:bg-secondary/80 transition-colors">Cancel</button>
                             </DialogClose>
-                            <button onClick={onSubmit} className="px-4 py-2 bg-red-600 text-white rounded">Delete</button>
+                            <button onClick={onSubmit} className="px-4 py-2 bg-destructive text-destructive-foreground rounded hover:bg-destructive/90 transition-colors">Delete</button>
                         </DialogFooter>
                     </div>
                 )}

@@ -37,7 +37,7 @@ const SearchForm = ({ resource, onSearch }) => {
                                 placeholder="General search..."
                                 value={searchParams.q || ''}
                                 onChange={handleInputChange}
-                                className="border rounded px-3 py-2"
+                                className="border border-input bg-background rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring"
                             />
                             <input
                                 type="text"
@@ -45,7 +45,7 @@ const SearchForm = ({ resource, onSearch }) => {
                                 placeholder="Patient name"
                                 value={searchParams.name || ''}
                                 onChange={handleInputChange}
-                                className="border rounded px-3 py-2"
+                                className="border border-input bg-background rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring"
                             />
                             <input
                                 type="text"
@@ -53,7 +53,7 @@ const SearchForm = ({ resource, onSearch }) => {
                                 placeholder="Phone number"
                                 value={searchParams.phone || ''}
                                 onChange={handleInputChange}
-                                className="border rounded px-3 py-2"
+                                className="border border-input bg-background rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring"
                             />
                             <input
                                 type="text"
@@ -61,7 +61,7 @@ const SearchForm = ({ resource, onSearch }) => {
                                 placeholder="Email"
                                 value={searchParams.email || ''}
                                 onChange={handleInputChange}
-                                className="border rounded px-3 py-2"
+                                className="border border-input bg-background rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring"
                             />
                             <input
                                 type="text"
@@ -69,13 +69,13 @@ const SearchForm = ({ resource, onSearch }) => {
                                 placeholder="Insurance ID"
                                 value={searchParams.insurance_id || ''}
                                 onChange={handleInputChange}
-                                className="border rounded px-3 py-2"
+                                className="border border-input bg-background rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring"
                             />
                             <select
                                 name="gender"
                                 value={searchParams.gender || ''}
                                 onChange={handleInputChange}
-                                className="border rounded px-3 py-2"
+                                className="border border-input bg-background rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring"
                             >
                                 <option value="">All Genders</option>
                                 <option value="male">Male</option>
@@ -88,7 +88,7 @@ const SearchForm = ({ resource, onSearch }) => {
                                 placeholder="Min age"
                                 value={searchParams.min_age || ''}
                                 onChange={handleInputChange}
-                                className="border rounded px-3 py-2"
+                                className="border border-input bg-background rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring"
                             />
                             <input
                                 type="number"
@@ -96,7 +96,7 @@ const SearchForm = ({ resource, onSearch }) => {
                                 placeholder="Max age"
                                 value={searchParams.max_age || ''}
                                 onChange={handleInputChange}
-                                className="border rounded px-3 py-2"
+                                className="border border-input bg-background rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring"
                             />
                         </div>
                     </>
@@ -112,7 +112,7 @@ const SearchForm = ({ resource, onSearch }) => {
                                 placeholder="General search..."
                                 value={searchParams.q || ''}
                                 onChange={handleInputChange}
-                                className="border rounded px-3 py-2"
+                                className="border border-input bg-background rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring"
                             />
                             <input
                                 type="text"
@@ -120,7 +120,7 @@ const SearchForm = ({ resource, onSearch }) => {
                                 placeholder="Patient name"
                                 value={searchParams.patient_name || ''}
                                 onChange={handleInputChange}
-                                className="border rounded px-3 py-2"
+                                className="border border-input bg-background rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring"
                             />
                             <input
                                 type="text"
@@ -128,7 +128,7 @@ const SearchForm = ({ resource, onSearch }) => {
                                 placeholder="Doctor name"
                                 value={searchParams.doctor_name || ''}
                                 onChange={handleInputChange}
-                                className="border rounded px-3 py-2"
+                                className="border border-input bg-background rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring"
                             />
                             <input
                                 type="text"
@@ -136,13 +136,13 @@ const SearchForm = ({ resource, onSearch }) => {
                                 placeholder="Appointment reason"
                                 value={searchParams.reason || ''}
                                 onChange={handleInputChange}
-                                className="border rounded px-3 py-2"
+                                className="border border-input bg-background rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring"
                             />
                             <select
                                 name="status"
                                 value={searchParams.status || ''}
                                 onChange={handleInputChange}
-                                className="border rounded px-3 py-2"
+                                className="border border-input bg-background rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring"
                             >
                                 <option value="">All Statuses</option>
                                 <option value="scheduled">Scheduled</option>
@@ -155,14 +155,14 @@ const SearchForm = ({ resource, onSearch }) => {
                                 name="start_date"
                                 value={searchParams.start_date || ''}
                                 onChange={handleInputChange}
-                                className="border rounded px-3 py-2"
+                                className="border border-input bg-background rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring"
                             />
                             <input
                                 type="date"
                                 name="end_date"
                                 value={searchParams.end_date || ''}
                                 onChange={handleInputChange}
-                                className="border rounded px-3 py-2"
+                                className="border border-input bg-background rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring"
                             />
                         </div>
                     </>
@@ -178,7 +178,7 @@ const SearchForm = ({ resource, onSearch }) => {
                                 placeholder="General search..."
                                 value={searchParams.q || ''}
                                 onChange={handleInputChange}
-                                className="border rounded px-3 py-2"
+                                className="border border-input bg-background rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring"
                             />
                             <input
                                 type="text"
@@ -186,7 +186,7 @@ const SearchForm = ({ resource, onSearch }) => {
                                 placeholder="Doctor name"
                                 value={searchParams.name || ''}
                                 onChange={handleInputChange}
-                                className="border rounded px-3 py-2"
+                                className="border border-input bg-background rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring"
                             />
                             <input
                                 type="text"
@@ -194,7 +194,7 @@ const SearchForm = ({ resource, onSearch }) => {
                                 placeholder="Specialty"
                                 value={searchParams.specialty || ''}
                                 onChange={handleInputChange}
-                                className="border rounded px-3 py-2"
+                                className="border border-input bg-background rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring"
                             />
                             <input
                                 type="text"
@@ -202,7 +202,7 @@ const SearchForm = ({ resource, onSearch }) => {
                                 placeholder="License number"
                                 value={searchParams.license_number || ''}
                                 onChange={handleInputChange}
-                                className="border rounded px-3 py-2"
+                                className="border border-input bg-background rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring"
                             />
                             <input
                                 type="number"
@@ -210,7 +210,7 @@ const SearchForm = ({ resource, onSearch }) => {
                                 placeholder="Min monthly rate"
                                 value={searchParams.min_rate || ''}
                                 onChange={handleInputChange}
-                                className="border rounded px-3 py-2"
+                                className="border border-input bg-background rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring"
                             />
                             <input
                                 type="number"
@@ -218,7 +218,7 @@ const SearchForm = ({ resource, onSearch }) => {
                                 placeholder="Max monthly rate"
                                 value={searchParams.max_rate || ''}
                                 onChange={handleInputChange}
-                                className="border rounded px-3 py-2"
+                                className="border border-input bg-background rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring"
                             />
                         </div>
                     </>
@@ -230,20 +230,20 @@ const SearchForm = ({ resource, onSearch }) => {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="mb-4 p-4 bg-gray-50 rounded-lg">
-            <h3 className="text-lg font-semibold mb-3">Search {resource.charAt(0).toUpperCase() + resource.slice(1)}</h3>
+        <form onSubmit={handleSubmit} className="mb-4 p-4 bg-muted/50 rounded-lg border border-border">
+            <h3 className="text-lg font-semibold mb-3 text-foreground">Search {resource.charAt(0).toUpperCase() + resource.slice(1)}</h3>
             {renderSearchFields()}
             <div className="flex gap-2 mt-4">
                 <button
                     type="submit"
-                    className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                    className="px-4 py-2 bg-primary text-primary-foreground rounded hover:bg-primary/90 transition-colors"
                 >
                     Search
                 </button>
                 <button
                     type="button"
                     onClick={handleClear}
-                    className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+                    className="px-4 py-2 bg-secondary text-secondary-foreground rounded hover:bg-secondary/80 transition-colors"
                 >
                     Clear
                 </button>
