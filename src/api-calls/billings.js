@@ -1,10 +1,17 @@
-import axios from "axios";
-import { BASE_URL } from "@/utils/utils";
+import API from "./axios";
 
-export const getBillings = async (id) => {
+export const getBillings = async () => {
     try {
-        const response = await axios.get(`${BASE_URL}/billings/${id}`, { withCredentials: true });
-        return response.data;
+        return await API.get("/billings");
+    } catch (error) {
+        console.error("Get billings error:", error);
+        throw error;
+    }
+};
+
+export const getBilling = async (id) => {
+    try {
+        return await API.get(`/billings/${id}`);
     } catch (error) {
         console.error("Get billing error:", error);
         throw error;
@@ -13,8 +20,7 @@ export const getBillings = async (id) => {
 
 export const createBilling = async (data) => {
     try {
-        const response = await axios.post(`${BASE_URL}/billings`, data, { withCredentials: true });
-        return response.data;
+        return await API.post("/billings", data);
     } catch (error) {
         console.error("Create billing error:", error);
         throw error;
@@ -23,8 +29,7 @@ export const createBilling = async (data) => {
 
 export const updateBilling = async (id, data) => {
     try {
-        const response = await axios.put(`${BASE_URL}/billings/${id}`, data, { withCredentials: true });
-        return response.data;
+        return await API.patch(`/billings/${id}`, data);
     } catch (error) {
         console.error("Update billing error:", error);
         throw error;
@@ -33,8 +38,7 @@ export const updateBilling = async (id, data) => {
 
 export const deleteBilling = async (id) => {
     try {
-        const response = await axios.delete(`${BASE_URL}/billings/${id}`, { withCredentials: true });
-        return response.data;
+        return await API.delete(`/billings/${id}`);
     } catch (error) {
         console.error("Delete billing error:", error);
         throw error;

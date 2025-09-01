@@ -1,10 +1,8 @@
-import axios from "axios";
-import { BASE_URL } from "@/utils/utils";
+import API from "./axios";
 
-export const getAnalyticsData = async () => {
+export const getAnalyticsData = async (reportType = "revenue") => {
     try {
-        const response = await axios.get(`${BASE_URL}/analytics`, { withCredentials: true });
-        return response.data;
+        return await API.get(`/analytics/${reportType}`);
     } catch (error) {
         console.error("Get analytics data error:", error);
         throw error;

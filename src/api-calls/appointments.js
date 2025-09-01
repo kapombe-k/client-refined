@@ -1,10 +1,17 @@
-import axios from "axios";
-import { BASE_URL } from "@/utils/utils";
+import API from "./axios";
 
-export const getAppointments = async (appointmentId) => {
+export const getAppointments = async () => {
     try {
-        const response = await axios.get(`${BASE_URL}/appointments/${appointmentId}`, { withCredentials: true });
-        return response.data;
+        return await API.get("/appointments");
+    } catch (error) {
+        console.error("Get appointments error:", error);
+        throw error;
+    }
+};
+
+export const getAppointment = async (appointmentId) => {
+    try {
+        return await API.get(`/appointments/${appointmentId}`);
     } catch (error) {
         console.error("Get appointment error:", error);
         throw error;
@@ -13,8 +20,7 @@ export const getAppointments = async (appointmentId) => {
 
 export const createAppointment = async (data) => {
     try {
-        const response = await axios.post(`${BASE_URL}/appointments`, data, { withCredentials: true });
-        return response.data;
+        return await API.post("/appointments", data);
     } catch (error) {
         console.error("Create appointment error:", error);
         throw error;
@@ -23,8 +29,7 @@ export const createAppointment = async (data) => {
 
 export const updateAppointment = async (appointmentId, data) => {
     try {
-        const response = await axios.put(`${BASE_URL}/appointments/${appointmentId}`, data, { withCredentials: true });
-        return response.data;
+        return await API.patch(`/appointments/${appointmentId}`, data);
     } catch (error) {
         console.error("Update appointment error:", error);
         throw error;
@@ -33,8 +38,7 @@ export const updateAppointment = async (appointmentId, data) => {
 
 export const deleteAppointment = async (appointmentId) => {
     try {
-        const response = await axios.delete(`${BASE_URL}/appointments/${appointmentId}`, { withCredentials: true });
-        return response.data;
+        return await API.delete(`/appointments/${appointmentId}`);
     } catch (error) {
         console.error("Delete appointment error:", error);
         throw error;

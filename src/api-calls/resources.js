@@ -1,10 +1,8 @@
-import axios from "axios";
-import { BASE_URL } from "@/utils/utils";
+import API from "./axios";
 
 export const getResource = async (resource) => {
     try {
-        const response = await axios.get(`${BASE_URL}/${resource}`, { withCredentials: true });
-        return response.data;
+        return await API.get(`/${resource}`);
     } catch (error) {
         console.error("Get resource error:", error);
         throw error;
@@ -13,8 +11,7 @@ export const getResource = async (resource) => {
 
 export const createResource = async (resource, data) => {
     try {
-        const response = await axios.post(`${BASE_URL}/${resource}`, data, { withCredentials: true });
-        return response.data;
+        return await API.post(`/${resource}`, data);
     } catch (error) {
         console.error("Create resource error:", error);
         throw error;
@@ -23,8 +20,7 @@ export const createResource = async (resource, data) => {
 
 export const updateResource = async (resource, id, data) => {
     try {
-        const response = await axios.put(`${BASE_URL}/${resource}/${id}`, data, { withCredentials: true });
-        return response.data;
+        return await API.patch(`/${resource}/${id}`, data);
     } catch (error) {
         console.error("Update resource error:", error);
         throw error;
@@ -33,8 +29,7 @@ export const updateResource = async (resource, id, data) => {
 
 export const deleteResource = async (resource, id) => {
     try {
-        const response = await axios.delete(`${BASE_URL}/${resource}/${id}`, { withCredentials: true });
-        return response.data;
+        return await API.delete(`/${resource}/${id}`);
     } catch (error) {
         console.error("Delete resource error:", error);
         throw error;

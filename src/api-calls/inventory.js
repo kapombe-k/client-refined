@@ -1,10 +1,8 @@
-import axios from "axios";
-import { BASE_URL } from "@/utils/utils";
+import API from "./axios";
 
 export const getInventory = async () => {
     try {
-        const response = await axios.get(`${BASE_URL}/inventory`, { withCredentials: true });
-        return response.data;
+        return await API.get("/inventory");
     } catch (error) {
         console.error("Get inventory error:", error);
         throw error;
@@ -13,8 +11,7 @@ export const getInventory = async () => {
 
 export const getInventoryItem = async (itemId) => {
     try {
-        const response = await axios.get(`${BASE_URL}/inventory/${itemId}`, { withCredentials: true });
-        return response.data;
+        return await API.get(`/inventory/${itemId}`);
     } catch (error) {
         console.error("Get inventory item error:", error);
         throw error;
@@ -23,8 +20,7 @@ export const getInventoryItem = async (itemId) => {
 
 export const createInventoryItem = async (data) => {
     try {
-        const response = await axios.post(`${BASE_URL}/inventory`, data, { withCredentials: true });
-        return response.data;
+        return await API.post("/inventory", data);
     } catch (error) {
         console.error("Create inventory item error:", error);
         throw error;
@@ -33,8 +29,7 @@ export const createInventoryItem = async (data) => {
 
 export const updateInventoryItem = async (itemId, data) => {
     try {
-        const response = await axios.put(`${BASE_URL}/inventory/${itemId}`, data, { withCredentials: true });
-        return response.data;
+        return await API.patch(`/inventory/${itemId}`, data);
     } catch (error) {
         console.error("Update inventory item error:", error);
         throw error;
@@ -43,8 +38,7 @@ export const updateInventoryItem = async (itemId, data) => {
 
 export const deleteInventoryItem = async (itemId) => {
     try {
-        const response = await axios.delete(`${BASE_URL}/inventory/${itemId}`, { withCredentials: true });
-        return response.data;
+        return await API.delete(`/inventory/${itemId}`);
     } catch (error) {
         console.error("Delete inventory item error:", error);
         throw error;

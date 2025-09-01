@@ -1,10 +1,8 @@
-import axios from "axios";
-import { BASE_URL } from "@/utils/utils";
+import API from "./axios";
 
-export const getVisits = async (patientId) => {
+export const getVisits = async () => {
     try {
-        const response = await axios.get(`${BASE_URL}/visits/${patientId}`, { withCredentials: true });
-        return response.data;
+        return await API.get("/visits");
     } catch (error) {
         console.error("Get visits error:", error);
         throw error;
@@ -13,8 +11,7 @@ export const getVisits = async (patientId) => {
 
 export const getVisit = async (visitId) => {
     try {
-        const response = await axios.get(`${BASE_URL}/visits/${visitId}`, { withCredentials: true });
-        return response.data;
+        return await API.get(`/visits/${visitId}`);
     } catch (error) {
         console.error("Get visit error:", error);
         throw error;
@@ -23,8 +20,7 @@ export const getVisit = async (visitId) => {
 
 export const createVisit = async (data) => {
     try {
-        const response = await axios.post(`${BASE_URL}/visits`, data, { withCredentials: true });
-        return response.data;
+        return await API.post("/visits", data);
     } catch (error) {
         console.error("Create visit error:", error);
         throw error;
@@ -33,8 +29,7 @@ export const createVisit = async (data) => {
 
 export const updateVisit = async (visitId, data) => {
     try {
-        const response = await axios.put(`${BASE_URL}/visits/${visitId}`, data, { withCredentials: true });
-        return response.data;
+        return await API.patch(`/visits/${visitId}`, data);
     } catch (error) {
         console.error("Update visit error:", error);
         throw error;
@@ -43,8 +38,7 @@ export const updateVisit = async (visitId, data) => {
 
 export const deleteVisit = async (visitId) => {
     try {
-        const response = await axios.delete(`${BASE_URL}/visits/${visitId}`, { withCredentials: true });
-        return response.data;
+        return await API.delete(`/visits/${visitId}`);
     } catch (error) {
         console.error("Delete visit error:", error);
         throw error;
