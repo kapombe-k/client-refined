@@ -44,3 +44,24 @@ export const deleteDoctor = async (doctorId) => {
         throw error;
     }
 };
+
+export const searchDoctors = async (searchParams = {}) => {
+    try {
+        // Build query string from search parameters
+        const params = new URLSearchParams();
+
+        Object.entries(searchParams).forEach(([key, value]) => {
+            if (value !== null && value !== undefined && value !== '') {
+                params.append(key, value);
+            }
+        });
+
+        const queryString = params.toString();
+        const url = queryString ? `/doctors/search?${queryString}` : '/doctors/search';
+
+        return await API.get(url);
+    } catch (error) {
+        console.error("Search doctors error:", error);
+        throw error;
+    }
+};

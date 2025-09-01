@@ -35,3 +35,24 @@ export const deletePatient = async (patientId) => {
         throw error;
     }
 };
+
+export const searchPatients = async (searchParams = {}) => {
+    try {
+        // Build query string from search parameters
+        const params = new URLSearchParams();
+
+        Object.entries(searchParams).forEach(([key, value]) => {
+            if (value !== null && value !== undefined && value !== '') {
+                params.append(key, value);
+            }
+        });
+
+        const queryString = params.toString();
+        const url = queryString ? `/patients/search?${queryString}` : '/patients/search';
+
+        return await API.get(url);
+    } catch (error) {
+        console.error("Search patients error:", error);
+        throw error;
+    }
+};

@@ -44,3 +44,24 @@ export const deleteAppointment = async (appointmentId) => {
         throw error;
     }
 };
+
+export const searchAppointments = async (searchParams = {}) => {
+    try {
+        // Build query string from search parameters
+        const params = new URLSearchParams();
+
+        Object.entries(searchParams).forEach(([key, value]) => {
+            if (value !== null && value !== undefined && value !== '') {
+                params.append(key, value);
+            }
+        });
+
+        const queryString = params.toString();
+        const url = queryString ? `/appointments/search?${queryString}` : '/appointments/search';
+
+        return await API.get(url);
+    } catch (error) {
+        console.error("Search appointments error:", error);
+        throw error;
+    }
+};
