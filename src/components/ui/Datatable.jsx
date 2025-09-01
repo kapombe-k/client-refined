@@ -4,6 +4,9 @@ import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
 import { getResource } from '../api-calls/resources';
+import { searchPatients } from '../api-calls/patients';
+import { searchAppointments } from '../api-calls/appointments';
+import { searchDoctors } from '../api-calls/doctors';
 import Loader from './Loader';
 import { toast } from 'react-toastify';
 import Modal from './Modal';
@@ -17,9 +20,28 @@ const ActionCellRenderer = ({ data, onEdit, onDelete }) => {
     );
 };
 
-const DataTable = ({ resource }) => {
+const DataTable = ({ resource, searchParams = {} }) => {
     const queryClient = useQueryClient();
-    const { data, isLoading, error } = useQuery([resource], () => getResource(resource));
+
+    // Choose the appropriate API function based on resource type
+    const getDataFunction = () => {
+        if (Object.keys(searchParams).length > 0) {
+            switch (resource) {
+                case 'patients':
+                    return searchPatients(searchParams);
+                case 'appointments':
+                    return searchAppointments(searchParams);
+                case 'doctors':
+                    return searchDoctors(searchParams);
+                default:
+                    return getResource(resource);
+            }
+        }
+        return getResource(resource);
+    };
+
+    const queryKey = Object.keys(searchParams).length > 0 ? [resource, searchParams] : [resource];
+    const { data, isLoading, error } = useQuery(queryKey, getDataFunction);
     const [modalState, setModalState] = useState({ open: false, operation: '', data: {}, id: null });
 
     const handleEdit = (rowData) => {
@@ -39,9 +61,20 @@ const DataTable = ({ resource }) => {
         closeModal();
     };
 
+    // Handle different data structures from search vs basic endpoints
+    const tableData = useMemo(() => {
+        if (!data) return [];
+        // If data has the search response structure, extract the array
+        if (data[resource]) {
+            return data[resource];
+        }
+        // Otherwise, assume it's the direct array
+        return Array.isArray(data) ? data : [];
+    }, [data, resource]);
+
     const columnDefs = useMemo(() => {
-        if (!data || !data.length) return [];
-        const keys = Object.keys(data[0]);
+        if (!tableData || !tableData.length) return [];
+        const keys = Object.keys(tableData[0]);
         const cols = keys.map(key => ({
             field: key,
             headerName: key.charAt(0).toUpperCase() + key.slice(1),
@@ -54,7 +87,7 @@ const DataTable = ({ resource }) => {
             width: 150
         });
         return cols;
-    }, [data]);
+    }, [tableData]);
 
     if (isLoading) return <Loader />;
     if (error) {
@@ -62,12 +95,12 @@ const DataTable = ({ resource }) => {
         return <div className="text-red-500">Error loading data</div>;
     }
 
-    if (!data || !data.length) return <div>No records found.</div>;
+    if (!tableData || !tableData.length) return <div>No records found.</div>;
 
     return (
         <div className="ag-theme-alpine" style={{ height: 400, width: '100%' }}>
             <AgGridReact
-                rowData={data}
+                rowData={tableData}
                 columnDefs={columnDefs}
                 pagination={true}
                 paginationPageSize={10}
