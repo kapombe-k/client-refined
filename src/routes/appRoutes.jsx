@@ -6,6 +6,8 @@ import Appointments from '../pages/appointment';
 import Inventory from '../pages/inventory';
 import Billing from '../pages/billing';
 import Analytics from '../pages/analytics';
+import Doctors from '../pages/doctors';
+import Visits from '../pages/visits';
 import Login from '../pages/login';
 import Register from '../pages/register';
 import PrivateRoute from './privateRoutes';
@@ -21,6 +23,8 @@ const AppRoutes = () => (
             <Route path="/inventory" element={<Inventory />} />
             <Route path="/billing" element={<Billing />} />
             <Route path="/analytics" element={<Analytics />} />
+            <Route path="/doctors" element={<Doctors />} />
+            <Route path="/visits" element={<Visits />} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

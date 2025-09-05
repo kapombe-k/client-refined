@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
-import { BASE_URL } from "@/utils/utils";
+import API from '../api-calls/axios';
+import { toast } from 'react-toastify';
 
 export default function VisitsComponent() {
     const [visits, setVisits] = useState([]);
@@ -25,11 +25,11 @@ export default function VisitsComponent() {
     // Function to fetch all visits from the backend
     const fetchAllVisits = async () => {
         try {
-            const response = await axios.get(`${BASE_URL}/visits`);
-            setVisits(response.data);
+            const response = await API.get('/visits');
+            setVisits(response);
         } catch (error) {
             console.error("Error fetching visits:", error);
-            alert("Failed to fetch visits.");
+            toast.error("Failed to fetch visits.");
         }
     };
 
@@ -51,8 +51,8 @@ export default function VisitsComponent() {
         try {
             // Ensure date is in YYYY-MM-DD format
             const formattedVisit = { ...newVisit, date: newVisit.date };
-            await axios.post(`${BASE_URL}/visits`, formattedVisit);
-            alert("Visit added successfully!");
+            await API.post('/visits', formattedVisit);
+            toast.success("Visit added successfully!");
             setNewVisit({
                 date: "",
                 summary: "",
@@ -65,38 +65,30 @@ export default function VisitsComponent() {
             fetchAllVisits(); // Refresh the list
         } catch (error) {
             console.error("Error adding visit:", error);
-            alert(
-                `Failed to add visit: ${error.response?.data?.detail || error.message}`
-            );
+            toast.error(`Failed to add visit: ${error.response?.data?.message || error.message}`);
         }
     };
 
     // Search for visits by Patient ID
     const searchVisitsByPatient = async () => {
         if (!searchPatientId) {
-            alert("Please enter a Patient ID to search for visits.");
+            toast.warning("Please enter a Patient ID to search for visits.");
             return;
         }
         try {
-            const response = await axios.get(
-                `${BASE_URL}/patients/${searchPatientId}/visits`
-            ); // Assuming you'll add this endpoint to your backend
-            setPatientVisits(response.data);
+            const response = await API.get(`/patients/${searchPatientId}/visits`);
+            setPatientVisits(response);
         } catch (error) {
             console.error("Error searching visits:", error);
             setPatientVisits([]);
-            alert(
-                `No visits found for patient with ID ${searchPatientId}, or patient does not exist.`
-            );
+            toast.error(`No visits found for patient with ID ${searchPatientId}, or patient does not exist.`);
             // Fallback for demonstration if the specific patient visits endpoint isn't ready
             const filteredVisits = visits.filter(
                 (visit) => visit.patient_id === parseInt(searchPatientId)
             );
             setPatientVisits(filteredVisits);
             if (filteredVisits.length === 0) {
-                alert(
-                    `No visits found for patient with ID ${searchPatientId} in the current fetched list.`
-                );
+                toast.info(`No visits found for patient with ID ${searchPatientId} in the current fetched list.`);
             }
         }
     };
@@ -114,43 +106,36 @@ export default function VisitsComponent() {
         try {
             // Ensure date is in YYYY-MM-DD format
             const formattedVisit = { ...editVisit, date: editVisit.date };
-            await axios.patch(`${BASE_URL}/visits/${editVisit.id}`, formattedVisit);
-            alert("Visit updated successfully!");
+            await API.patch(`/visits/${editVisit.id}`, formattedVisit);
+            toast.success("Visit updated successfully!");
             setEditVisit(null); // Clear edit form
             fetchAllVisits(); // Refresh the list
             setPatientVisits([]); // Clear patient specific search
         } catch (error) {
             console.error("Error updating visit:", error);
-            alert(
-                `Failed to update visit: ${error.response?.data?.detail || error.message
-                }`
-            );
+            toast.error(`Failed to update visit: ${error.response?.data?.message || error.message}`);
         }
     };
 
     // Delete a visit
     const deleteVisit = async (id) => {
-        if (
-            window.confirm(`Are you sure you want to delete visit with ID: ${id}?`)
-        ) {
+        if (window.confirm(`Are you sure you want to delete visit with ID: ${id}?`)) {
             try {
-                await axios.delete(`${BASE_URL}/visits/${id}`);
-                alert("Visit deleted successfully!");
+                await API.delete(`/visits/${id}`);
+                toast.success("Visit deleted successfully!");
                 fetchAllVisits(); // Refresh the list
                 setPatientVisits([]); // Clear patient specific search
             } catch (error) {
                 console.error("Error deleting visit:", error);
-                alert(
-                    `Failed to delete visit: ${error.response?.data?.detail || error.message
-                    }`
-                );
+                toast.error(`Failed to delete visit: ${error.response?.data?.message || error.message}`);
             }
         }
     };
 
     return (
-        <div style={styles.container}>
-            <h2>Visit Management</h2>
+        <>
+            <div style={styles.container}>
+                <h2>Visit Management</h2>
             <p>
                 Manage patient visits, including details of their appointments,
                 procedures, and payments.
@@ -421,6 +406,7 @@ export default function VisitsComponent() {
                 )}
             </div>
         </div>
+        </>
     );
 }
 

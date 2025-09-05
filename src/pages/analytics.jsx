@@ -1,5 +1,4 @@
 import React from 'react';
-import DashboardLayout from '../layouts/dashBoardLayout';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
 const sampleData = [
@@ -10,7 +9,7 @@ const sampleData = [
 ];
 
 const Analytics = () => (
-    <DashboardLayout>
+    <>
         <h2 className="text-xl font-bold mb-4 text-foreground">Analytics</h2>
         <div className="bg-card p-6 rounded-lg shadow-lg border">
             <ResponsiveContainer width="100%" height={300}>
@@ -22,7 +21,7 @@ const Analytics = () => (
                 </BarChart>
             </ResponsiveContainer>
         </div>
-    </DashboardLayout>
+    </>
 );
 
 export default Analytics;

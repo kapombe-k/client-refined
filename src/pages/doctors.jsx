@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import DashboardLayout from '../layouts/dashBoardLayout';
 import DataTable from '../components/ui/Datatable';
 import SearchForm from '../components/ui/SearchForm';
 import Modal from '../components/ui/modal';
@@ -14,14 +13,14 @@ const Doctors = () => {
     };
 
     return (
-        <DashboardLayout>
+        <>
             <h2 className="text-xl font-bold mb-4 text-foreground">Doctors</h2>
             <SearchForm resource="doctors" onSearch={handleSearch} />
             <DataTable resource="doctors" searchParams={searchParams} />
             <Modal resource="doctors" operation="create" />
             <Modal resource="doctors" operation="update" initialData={selectedDoctor} id={selectedId} />
             <Modal resource="doctors" operation="delete" id={selectedId} />
-        </DashboardLayout>
+        </>
     );
 };
 

@@ -51,7 +51,10 @@ const DataTable = ({ resource, searchParams = {} }) => {
     };
 
     const queryKey = Object.keys(searchParams).length > 0 ? [resource, searchParams] : [resource];
-    const { data, isLoading, error } = useQuery(queryKey, getDataFunction);
+    const { data, isLoading, error } = useQuery({
+        queryKey,
+        queryFn: getDataFunction
+    });
     const [modalState, setModalState] = useState({ open: false, operation: '', data: {}, id: null });
 
     const handleEdit = (rowData) => {
@@ -67,7 +70,7 @@ const DataTable = ({ resource, searchParams = {} }) => {
     };
 
     const onMutationSuccess = () => {
-        queryClient.invalidateQueries([resource]);
+        queryClient.invalidateQueries({ queryKey: [resource] });
         closeModal();
     };
 

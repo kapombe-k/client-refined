@@ -17,6 +17,12 @@ const Sidebar = () => {
                     <RoleGate roles={["admin", "receptionist", "doctor", "patient"]}>
                         <li><Link to="/appointments" className="text-sidebar-foreground hover:text-sidebar-foreground/80">Appointments</Link></li>
                     </RoleGate>
+                    <RoleGate roles={["admin", "receptionist", "doctor"]}>
+                        <li><Link to="/doctors" className="text-sidebar-foreground hover:text-sidebar-foreground/80">Doctors</Link></li>
+                    </RoleGate>
+                    <RoleGate roles={["admin", "receptionist", "doctor", "patient"]}>
+                        <li><Link to="/visits" className="text-sidebar-foreground hover:text-sidebar-foreground/80">Visits</Link></li>
+                    </RoleGate>
                     <RoleGate roles={["admin", "technician"]}>
                         <li><Link to="/inventory" className="text-sidebar-foreground hover:text-sidebar-foreground/80">Inventory</Link></li>
                     </RoleGate>
