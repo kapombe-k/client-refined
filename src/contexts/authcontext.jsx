@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from '../api-calls/axios';
+import API from '../api-calls/axios';
 
 const AuthContext = createContext();
 
@@ -11,22 +11,46 @@ export const AuthProvider = ({ children }) => {
 
     useEffect(() => {
         // Try to fetch current user on mount
-        axios.get('/auth/me')
-            .then(res => setUser(res.data))
-            .catch(() => setUser(null))
+        API.get('/auth/me')
+            .then(res => {
+                console.log('Auth check response:', res);
+                setUser(res.user || res);
+            })
+            .catch((err) => {
+                console.log('Auth check failed:', err);
+                setUser(null);
+            })
             .finally(() => setLoading(false));
     }, []);
 
     const login = async (data) => {
-        const res = await axios.post('/auth/login', data);
-        setUser(res.data.user);
-        navigate('/');
+        try {
+            console.log('Login attempt with data:', data);
+            const res = await API.post('/auth/login', data);
+            console.log('Login response:', res);
+            
+            // Handle different response structures
+            const userData = res.user || res.data?.user || res;
+            setUser(userData);
+            navigate('/');
+            return res;
+        } catch (error) {
+            console.error('Login error in context:', error);
+            throw error;
+        }
     };
 
     const logout = async () => {
-        await axios.post('/auth/logout');
-        setUser(null);
-        navigate('/login');
+        try {
+            await API.post('/auth/logout');
+            setUser(null);
+            navigate('/login');
+        } catch (error) {
+            console.error('Logout error:', error);
+            // Still clear user state even if logout request fails
+            setUser(null);
+            navigate('/login');
+        }
     };
 
     const hasRole = (roles) => {
