@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/styles/ag-grid.css';
@@ -103,10 +103,12 @@ const DataTable = ({ resource, searchParams = {} }) => {
     }, [tableData]);
 
     if (isLoading) return <Loader />;
-    if (error) {
-        toast.error('Failed to load data');
-        return <div className="text-destructive p-4 bg-destructive/10 rounded-lg border border-destructive/20">Error loading data</div>;
-    }
+    // Handle error state
+        if (error) {
+            toast.error('Failed to load data');
+            return <div className="text-destructive p-4 bg-destructive/10 rounded-lg border border-destructive/20">Error loading data</div>;
+        }
+    
 
     if (!tableData || !tableData.length) return <div className="text-muted-foreground p-4 bg-muted/50 rounded-lg">No records found.</div>;
 
