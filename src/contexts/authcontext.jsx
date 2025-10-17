@@ -10,17 +10,9 @@ export const AuthProvider = ({ children }) => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        // Try to fetch current user on mount
-        API.get('/auth/me')
-            .then(res => {
-                console.log('Auth check response:', res);
-                setUser(res.user || res);
-            })
-            .catch((err) => {
-                console.log('Auth check failed:', err);
-                setUser(null);
-            })
-            .finally(() => setLoading(false));
+        // Check if we have a session cookie by trying to access a protected endpoint
+        // For now, just set loading to false - auth will be checked when needed
+        setLoading(false);
     }, []);
 
     const login = async (data) => {
@@ -28,7 +20,7 @@ export const AuthProvider = ({ children }) => {
             console.log('Login attempt with data:', data);
             const res = await API.post('/auth/login', data);
             console.log('Login response:', res);
-            
+
             // Handle different response structures
             const userData = res.user || res.data?.user || res;
             setUser(userData);
@@ -58,8 +50,25 @@ export const AuthProvider = ({ children }) => {
         return Array.isArray(roles) ? roles.includes(user.role) : user.role === roles;
     };
 
+    // Helper functions for role checking
+    const isAdmin = () => user?.role === 'admin';
+    const isDoctor = () => user?.role === 'doctor';
+    const isReceptionist = () => user?.role === 'receptionist';
+    const isTechnician = () => user?.role === 'technician';
+
     return (
-        <AuthContext.Provider value={{ user, loading, login, logout, isAuthenticated: !!user, hasRole }}>
+        <AuthContext.Provider value={{
+            user,
+            loading,
+            login,
+            logout,
+            isAuthenticated: !!user,
+            hasRole,
+            isAdmin,
+            isDoctor,
+            isReceptionist,
+            isTechnician
+        }}>
             {children}
         </AuthContext.Provider>
     );
