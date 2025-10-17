@@ -1,4 +1,4 @@
-import { Toast } from "@base-ui-components/react";
+import { showToast } from "../components/ui/toast";
 import axios from "axios";
 import { BASE_URL } from "../utils/utils";
 
@@ -13,7 +13,7 @@ API.interceptors.request.use((config) => {
 }, (error) => {
     // Handle request errors
     if (error.response?.status === 401) {
-        Toast.error("Unauthorized access. Please log in.");
+        showToast("Unauthorized access. Please log in.", "error");
         // Clear any stored auth data
         localStorage.removeItem("user");
         localStorage.removeItem("token");
@@ -29,7 +29,7 @@ API.interceptors.response.use((response) => {
 }, (error) => {
     // Handle authentication errors
     if (error.response?.status === 401) {
-        Toast.error("Session expired. Please log in again.");
+        showToast("Session expired. Please log in again.", "error");
         // Clear stored auth data
         localStorage.removeItem("user");
         localStorage.removeItem("token");
@@ -37,14 +37,14 @@ API.interceptors.response.use((response) => {
     }
     // Handle other common errors
     else if (error.response?.status === 403) {
-        Toast.error("Access denied. Insufficient permissions.");
+        showToast("Access denied. Insufficient permissions.", "error");
     }
     else if (error.response?.status === 500) {
-        Toast.error("Server error. Please try again later.");
+        showToast("Server error. Please try again later.", "error");
     }
     else if (error.response?.status >= 400) {
         const message = error.response?.data?.message || error.response?.data?.error || "An error occurred";
-        Toast.error(message);
+        showToast(message, "error");
     }
 
     return Promise.reject(error);
