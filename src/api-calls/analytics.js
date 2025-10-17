@@ -8,3 +8,12 @@ export const getAnalyticsData = async (reportType = "revenue") => {
         throw error;
     }
 };
+
+export const getDashboardAnalytics = async () => {
+    try {
+        return await API.get("/analytics/dashboard");
+    } catch (error) {
+        console.error("Get dashboard analytics error:", error);
+        throw error;
+    }
+};
