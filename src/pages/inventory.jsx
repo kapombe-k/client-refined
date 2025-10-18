@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import { useAuthContext } from '../contexts/authcontext';
 import { useNavigate } from 'react-router-dom';
 import AddInventoryModal from '../components/AddInventoryModal';
+import { getInventory } from '../api-calls/inventory';
+import { showToast } from '../components/ui/toast';
 
 export default function InventoryPage() {
   const { isAuthenticated, loading } = useAuthContext();
@@ -19,15 +21,19 @@ export default function InventoryPage() {
   }, [isAuthenticated, loading, navigate]);
 
   useEffect(() => {
-    // Use dummy data instead of API calls to prevent authentication issues
-    setInventory([
-      { id: 1, name: 'Dental Floss', category: 'Hygiene', quantity: 150, unitPrice: 2.50, supplier: 'OralCare Inc' },
-      { id: 2, name: 'Toothpaste', category: 'Hygiene', quantity: 75, unitPrice: 3.25, supplier: 'FreshSmile Co' },
-      { id: 3, name: 'Dental Gloves', category: 'Supplies', quantity: 200, unitPrice: 0.15, supplier: 'MedSupply Ltd' },
-      { id: 4, name: 'Mouthwash', category: 'Hygiene', quantity: 45, unitPrice: 4.50, supplier: 'OralCare Inc' },
-      { id: 5, name: 'X-Ray Film', category: 'Equipment', quantity: 25, unitPrice: 12.00, supplier: 'DentalTech' },
-    ]);
-    setLoadingInventory(false);
+    const loadInventory = async () => {
+      try {
+        const inventoryData = await getInventory();
+        setInventory(inventoryData);
+      } catch (error) {
+        console.error('Failed to load inventory:', error);
+        showToast('Failed to load inventory. Please try again.', 'error');
+        setInventory([]);
+      } finally {
+        setLoadingInventory(false);
+      }
+    };
+    loadInventory();
   }, []);
 
   const handleInventoryAdded = (newItem) => {

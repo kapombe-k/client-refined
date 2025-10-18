@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import { useAuthContext } from '../contexts/authcontext';
 import { useNavigate } from 'react-router-dom';
 import PatientProfileModal from '../components/PatientProfileModal';
+import { getVisits, createVisit, updateVisit, deleteVisit } from '../api-calls/visits';
+import { showToast } from '../components/ui/toast';
 
 export default function VisitsPage() {
   const { isAuthenticated, loading, isAdmin, user } = useAuthContext();
@@ -13,6 +15,8 @@ export default function VisitsPage() {
   const [filteredVisits, setFilteredVisits] = useState([]);
   const [selectedPatient, setSelectedPatient] = useState('');
   const [loadingVisits, setLoadingVisits] = useState(true);
+  const [savingVisit, setSavingVisit] = useState(false);
+  const [deletingVisit, setDeletingVisit] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [modalMode, setModalMode] = useState('add'); // 'add' or 'edit'
   const [selectedVisit, setSelectedVisit] = useState(null);
@@ -55,73 +59,21 @@ export default function VisitsPage() {
   }, [isAuthenticated, loading, navigate]);
 
   useEffect(() => {
-    // Use dummy data instead of API calls to prevent authentication issues
-    const dummyVisits = [
-      {
-        id: 1,
-        patient_id: 1,
-        patient_name: 'John Doe',
-        doctor_id: 1,
-        doctor_name: 'Dr. Sarah Smith',
-        date: '2024-01-15',
-        summary: 'Routine checkup and cleaning',
-        procedure_details: 'Professional dental cleaning, fluoride treatment, oral examination',
-        amount_paid: 150.00,
-        balance: 0.00,
-      },
-      {
-        id: 2,
-        patient_id: 2,
-        patient_name: 'Jane Smith',
-        doctor_id: 2,
-        doctor_name: 'Dr. Michael Johnson',
-        date: '2024-01-18',
-        summary: 'Cavity filling',
-        procedure_details: 'Composite filling for molar cavity, local anesthesia',
-        amount_paid: 200.00,
-        balance: 0.00,
-      },
-      {
-        id: 3,
-        patient_id: 3,
-        patient_name: 'Bob Johnson',
-        doctor_id: 1,
-        doctor_name: 'Dr. Sarah Smith',
-        date: '2024-01-20',
-        summary: 'Root canal consultation',
-        procedure_details: 'Initial consultation for root canal procedure, X-rays taken',
-        amount_paid: 100.00,
-        balance: 150.00,
-      },
-      {
-        id: 4,
-        patient_id: 1,
-        patient_name: 'John Doe',
-        doctor_id: 3,
-        doctor_name: 'Dr. Emily Davis',
-        date: '2024-01-22',
-        summary: 'Follow-up visit',
-        procedure_details: 'Post-treatment check, oral hygiene instructions',
-        amount_paid: 75.00,
-        balance: 0.00,
-      },
-      {
-        id: 5,
-        patient_id: 4,
-        patient_name: 'Alice Brown',
-        doctor_id: 4,
-        doctor_name: 'Dr. Robert Lee',
-        date: '2024-01-25',
-        summary: 'Wisdom tooth extraction',
-        procedure_details: 'Surgical extraction of impacted wisdom tooth, sutures placed',
-        amount_paid: 300.00,
-        balance: 200.00,
-      },
-    ];
-
-    setVisits(dummyVisits);
-    setFilteredVisits(dummyVisits);
-    setLoadingVisits(false);
+    const loadVisits = async () => {
+      try {
+        const visitsData = await getVisits();
+        setVisits(visitsData);
+        setFilteredVisits(visitsData);
+      } catch (error) {
+        console.error('Failed to load visits:', error);
+        showToast('Failed to load visits. Please try again.', 'error');
+        setVisits([]);
+        setFilteredVisits([]);
+      } finally {
+        setLoadingVisits(false);
+      }
+    };
+    loadVisits();
   }, []);
 
   // Filter visits based on selected patient and search term
@@ -174,49 +126,55 @@ export default function VisitsPage() {
     setShowModal(true);
   };
 
-  const handleSaveVisit = () => {
-    // In a real app, this would make an API call
-    if (modalMode === 'add') {
-      const newVisit = {
-        id: visits.length + 1,
+  const handleSaveVisit = async () => {
+    setSavingVisit(true);
+    try {
+      const visitData = {
         patient_id: parseInt(visitForm.patient_id),
-        patient_name: patients.find(p => p.id === parseInt(visitForm.patient_id))?.name || '',
         doctor_id: parseInt(visitForm.doctor_id),
-        doctor_name: doctors.find(d => d.id === parseInt(visitForm.doctor_id))?.name || '',
         date: visitForm.date,
         summary: visitForm.summary,
         procedure_details: visitForm.procedure_details,
         amount_paid: parseFloat(visitForm.amount_paid),
         balance: parseFloat(visitForm.balance),
       };
-      setVisits([...visits, newVisit]);
-    } else if (modalMode === 'edit' && selectedVisit) {
-      const updatedVisits = visits.map(visit =>
-        visit.id === selectedVisit.id
-          ? {
-              ...visit,
-              patient_id: parseInt(visitForm.patient_id),
-              patient_name: patients.find(p => p.id === parseInt(visitForm.patient_id))?.name || '',
-              doctor_id: parseInt(visitForm.doctor_id),
-              doctor_name: doctors.find(d => d.id === parseInt(visitForm.doctor_id))?.name || '',
-              date: visitForm.date,
-              summary: visitForm.summary,
-              procedure_details: visitForm.procedure_details,
-              amount_paid: parseFloat(visitForm.amount_paid),
-              balance: parseFloat(visitForm.balance),
-            }
-          : visit
-      );
-      setVisits(updatedVisits);
+
+      if (modalMode === 'add') {
+        const newVisit = await createVisit(visitData);
+        setVisits([...visits, newVisit]);
+        showToast('Visit added successfully', 'success');
+      } else if (modalMode === 'edit' && selectedVisit) {
+        const updatedVisit = await updateVisit(selectedVisit.id, visitData);
+        const updatedVisits = visits.map(visit =>
+          visit.id === selectedVisit.id ? updatedVisit : visit
+        );
+        setVisits(updatedVisits);
+        showToast('Visit updated successfully', 'success');
+      }
+      setShowModal(false);
+    } catch (error) {
+      console.error('Failed to save visit:', error);
+      showToast('Failed to save visit. Please try again.', 'error');
+    } finally {
+      setSavingVisit(false);
     }
-    setShowModal(false);
   };
 
-  const handleDeleteVisit = (visitId) => {
+  const handleDeleteVisit = async (visitId) => {
     if (!isAdmin) return;
 
     if (window.confirm('Are you sure you want to delete this visit?')) {
-      setVisits(visits.filter(visit => visit.id !== visitId));
+      setDeletingVisit(true);
+      try {
+        await deleteVisit(visitId);
+        setVisits(visits.filter(visit => visit.id !== visitId));
+        showToast('Visit deleted successfully', 'success');
+      } catch (error) {
+        console.error('Failed to delete visit:', error);
+        showToast('Failed to delete visit. Please try again.', 'error');
+      } finally {
+        setDeletingVisit(false);
+      }
     }
   };
 
@@ -343,11 +301,10 @@ export default function VisitsPage() {
                       ${visit.amount_paid}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
-                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                        visit.balance === 0
+                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${visit.balance === 0
                           ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
                           : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400'
-                      }`}>
+                        }`}>
                         ${visit.balance}
                       </span>
                     </td>
@@ -355,20 +312,20 @@ export default function VisitsPage() {
                       <button
                         onClick={() => handleEditVisit(visit)}
                         disabled={!isAdmin}
-                        className={`mr-2 px-3 py-1 text-xs font-medium rounded ${
-                          isAdmin
+                        className={`mr-2 px-3 py-1 text-xs font-medium rounded ${isAdmin
                             ? 'bg-blue-100 text-blue-800 hover:bg-blue-200 dark:bg-blue-900/30 dark:text-blue-400'
                             : 'bg-gray-100 text-gray-400 cursor-not-allowed dark:bg-gray-800 dark:text-gray-600'
-                        }`}
+                          }`}
                       >
                         Edit
                       </button>
                       {isAdmin && (
                         <button
                           onClick={() => handleDeleteVisit(visit.id)}
-                          className="px-3 py-1 text-xs font-medium rounded bg-red-100 text-red-800 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400"
+                          disabled={deletingVisit}
+                          className="px-3 py-1 text-xs font-medium rounded bg-red-100 text-red-800 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                          Delete
+                          {deletingVisit ? 'Deleting...' : 'Delete'}
                         </button>
                       )}
                     </td>
@@ -396,7 +353,7 @@ export default function VisitsPage() {
                 </label>
                 <select
                   value={visitForm.patient_id}
-                  onChange={(e) => setVisitForm({...visitForm, patient_id: e.target.value})}
+                  onChange={(e) => setVisitForm({ ...visitForm, patient_id: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
                   required
                 >
@@ -414,7 +371,7 @@ export default function VisitsPage() {
                 </label>
                 <select
                   value={visitForm.doctor_id}
-                  onChange={(e) => setVisitForm({...visitForm, doctor_id: e.target.value})}
+                  onChange={(e) => setVisitForm({ ...visitForm, doctor_id: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
                   required
                 >
@@ -433,7 +390,7 @@ export default function VisitsPage() {
                 <input
                   type="date"
                   value={visitForm.date}
-                  onChange={(e) => setVisitForm({...visitForm, date: e.target.value})}
+                  onChange={(e) => setVisitForm({ ...visitForm, date: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
                   required
                 />
@@ -445,7 +402,7 @@ export default function VisitsPage() {
                 <input
                   type="text"
                   value={visitForm.summary}
-                  onChange={(e) => setVisitForm({...visitForm, summary: e.target.value})}
+                  onChange={(e) => setVisitForm({ ...visitForm, summary: e.target.value })}
                   placeholder="Brief summary of the visit"
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
                   required
@@ -457,7 +414,7 @@ export default function VisitsPage() {
                 </label>
                 <textarea
                   value={visitForm.procedure_details}
-                  onChange={(e) => setVisitForm({...visitForm, procedure_details: e.target.value})}
+                  onChange={(e) => setVisitForm({ ...visitForm, procedure_details: e.target.value })}
                   placeholder="Detailed description of procedures performed"
                   rows={3}
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
@@ -473,7 +430,7 @@ export default function VisitsPage() {
                     type="number"
                     step="0.01"
                     value={visitForm.amount_paid}
-                    onChange={(e) => setVisitForm({...visitForm, amount_paid: e.target.value})}
+                    onChange={(e) => setVisitForm({ ...visitForm, amount_paid: e.target.value })}
                     placeholder="0.00"
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
                     required
@@ -487,7 +444,7 @@ export default function VisitsPage() {
                     type="number"
                     step="0.01"
                     value={visitForm.balance}
-                    onChange={(e) => setVisitForm({...visitForm, balance: e.target.value})}
+                    onChange={(e) => setVisitForm({ ...visitForm, balance: e.target.value })}
                     placeholder="0.00"
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
                   />
@@ -503,9 +460,10 @@ export default function VisitsPage() {
               </button>
               <button
                 onClick={handleSaveVisit}
-                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 transition-colors"
+                disabled={savingVisit}
+                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {modalMode === 'add' ? 'Add Visit' : 'Save Changes'}
+                {savingVisit ? 'Saving...' : (modalMode === 'add' ? 'Add Visit' : 'Save Changes')}
               </button>
             </div>
           </div>

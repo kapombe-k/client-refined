@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import { useAuthContext } from '../contexts/authcontext';
 import { useNavigate } from 'react-router-dom';
 import AddBillingModal from '../components/AddBillingModal';
+import { getBillings } from '../api-calls/billings';
+import { showToast } from '../components/ui/toast';
 
 export default function BillingPage() {
   const { isAuthenticated, loading } = useAuthContext();
@@ -19,14 +21,19 @@ export default function BillingPage() {
   }, [isAuthenticated, loading, navigate]);
 
   useEffect(() => {
-    // Use dummy data instead of API calls to prevent authentication issues
-    setBillings([
-      { id: 1, patientName: 'John Doe', invoiceNumber: 'INV-001', amount: 150.00, paid: 150.00, status: 'paid', date: '2024-01-15' },
-      { id: 2, patientName: 'Jane Smith', invoiceNumber: 'INV-002', amount: 200.00, paid: 180.00, status: 'partial', date: '2024-01-18' },
-      { id: 3, patientName: 'Bob Johnson', invoiceNumber: 'INV-003', amount: 75.00, paid: 0.00, status: 'unpaid', date: '2024-01-20' },
-      { id: 4, patientName: 'Alice Brown', invoiceNumber: 'INV-004', amount: 300.00, paid: 300.00, status: 'paid', date: '2024-01-22' },
-    ]);
-    setLoadingBillings(false);
+    const loadBillings = async () => {
+      try {
+        const billingsData = await getBillings();
+        setBillings(billingsData);
+      } catch (error) {
+        console.error('Failed to load billings:', error);
+        showToast('Failed to load billings. Please try again.', 'error');
+        setBillings([]);
+      } finally {
+        setLoadingBillings(false);
+      }
+    };
+    loadBillings();
   }, []);
 
   const handleBillingAdded = (newBilling) => {

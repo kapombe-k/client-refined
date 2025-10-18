@@ -5,6 +5,7 @@ import { useAuthContext } from '../contexts/authcontext';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { getAppointments } from '../api-calls/appointments';
 import AddAppointmentModal from '../components/AddAppointmentModal';
+import { showToast } from '../components/ui/toast';
 
 export default function AppointmentsPage() {
   const { isAuthenticated, loading } = useAuthContext();
@@ -18,15 +19,19 @@ export default function AppointmentsPage() {
 
 
   useEffect(() => {
-    // Use dummy data instead of API calls to prevent authentication issues
-    setAppointments([
-      { id: 1, patientName: 'John Doe', doctorName: 'Dr. Smith', date: '2024-01-25', time: '09:00', status: 'scheduled', reason: 'Routine checkup' },
-      { id: 2, patientName: 'Jane Smith', doctorName: 'Dr. Johnson', date: '2024-01-25', time: '10:30', status: 'confirmed', reason: 'Tooth cleaning' },
-      { id: 3, patientName: 'Bob Johnson', doctorName: 'Dr. Smith', date: '2024-01-26', time: '14:00', status: 'completed', reason: 'Cavity filling' },
-      { id: 4, patientName: 'Alice Brown', doctorName: 'Dr. Lee', date: '2024-01-26', time: '11:00', status: 'cancelled', reason: 'Consultation' },
-      { id: 5, patientName: 'Charlie Wilson', doctorName: 'Dr. Davis', date: '2024-01-27', time: '15:30', status: 'scheduled', reason: 'Root canal' },
-    ]);
-    setLoadingAppointments(false);
+    const loadAppointments = async () => {
+      try {
+        const appointmentsData = await getAppointments();
+        setAppointments(appointmentsData);
+      } catch (error) {
+        console.error('Failed to load appointments:', error);
+        showToast('Failed to load appointments. Please try again.', 'error');
+        setAppointments([]);
+      } finally {
+        setLoadingAppointments(false);
+      }
+    };
+    loadAppointments();
 
     if (searchParams.get('action') === 'new') {
       setShowModal(true);

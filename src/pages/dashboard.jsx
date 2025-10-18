@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useAuthContext } from '../contexts/authcontext';
 import { useNavigate } from 'react-router-dom';
 import { getDashboardAnalytics } from '../api-calls/analytics';
+import { showToast } from '../components/ui/toast';
 
 export default function DashboardPage() {
   const { user, isAuthenticated, loading, isAdmin, isDoctor, isReceptionist, isTechnician } = useAuthContext();
@@ -18,44 +19,49 @@ export default function DashboardPage() {
 
   const loadDashboardStats = async () => {
     try {
-      // Use dummy data for all roles since the analytics endpoint may not be available
+      // Try to get analytics data from API
+      const analyticsData = await getDashboardAnalytics();
+
+      // Set stats based on user role and API response
       if (isAdmin) {
         setStats({
-          totalPatients: 150,
-          todayAppointments: 12,
-          monthlyRevenue: 25000,
-          pendingBillings: 5,
+          totalPatients: analyticsData.totalPatients || 0,
+          todayAppointments: analyticsData.todayAppointments || 0,
+          monthlyRevenue: analyticsData.monthlyRevenue || 0,
+          pendingBillings: analyticsData.pendingBillings || 0,
         });
       } else if (isDoctor) {
         setStats({
-          todayAppointments: 5,
-          pendingVisits: 3,
-          monthlyEarnings: 12500,
-          completedTreatments: 45,
+          todayAppointments: analyticsData.todayAppointments || 0,
+          pendingVisits: analyticsData.pendingVisits || 0,
+          monthlyEarnings: analyticsData.monthlyEarnings || 0,
+          completedTreatments: analyticsData.completedTreatments || 0,
         });
       } else if (isReceptionist) {
         setStats({
-          todayAppointments: 12,
-          pendingCheckIns: 4,
-          pendingInvoices: 8,
-          availableDoctors: 6,
+          todayAppointments: analyticsData.todayAppointments || 0,
+          pendingCheckIns: analyticsData.pendingCheckIns || 0,
+          pendingInvoices: analyticsData.pendingInvoices || 0,
+          availableDoctors: analyticsData.availableDoctors || 0,
         });
       } else if (isTechnician) {
         setStats({
-          inventoryItems: 156,
-          lowStockItems: 8,
-          patientRecords: 342,
-          todayTasks: 5,
+          inventoryItems: analyticsData.inventoryItems || 0,
+          lowStockItems: analyticsData.lowStockItems || 0,
+          patientRecords: analyticsData.patientRecords || 0,
+          todayTasks: analyticsData.todayTasks || 0,
         });
       } else {
         setStats({
-          todayAppointments: 0,
-          pendingTasks: 0,
-          recentActivity: [],
+          todayAppointments: analyticsData.todayAppointments || 0,
+          pendingTasks: analyticsData.pendingTasks || 0,
+          recentActivity: analyticsData.recentActivity || [],
         });
       }
     } catch (error) {
-      console.error('Failed to load stats:', error);
+      console.error('Failed to load dashboard stats:', error);
+      showToast('Failed to load dashboard data. Using default values.', 'error');
+
       // Fallback to basic stats
       setStats({
         todayAppointments: 0,
@@ -119,28 +125,43 @@ export default function DashboardPage() {
 
         {isDoctor && (
           <>
-            <StatCard title="Today's Appointments" value="5" icon="📅" />
-            <StatCard title="Pending Visits" value="3" icon="📋" />
-            <StatCard title="This Month Earnings" value="$12,500" icon="💰" />
-            <StatCard title="Completed Treatments" value="45" icon="✅" />
+            {/* TODO: Replace with API calls */}
+            {/* <StatCard title="Today's Appointments" value={stats?.todayAppointments || '0'} icon="📅" />
+            <StatCard title="Pending Visits" value={stats?.pendingVisits || '0'} icon="📋" />
+            <StatCard title="This Month Earnings" value={`$${stats?.monthlyEarnings || '0'}`} icon="💰" />
+            <StatCard title="Completed Treatments" value={stats?.completedTreatments || '0'} icon="✅" /> */}
+            <StatCard title="Today's Appointments" value="0" icon="📅" />
+            <StatCard title="Pending Visits" value="0" icon="📋" />
+            <StatCard title="This Month Earnings" value="$0" icon="💰" />
+            <StatCard title="Completed Treatments" value="0" icon="✅" />
           </>
         )}
 
         {isReceptionist && (
           <>
-            <StatCard title="Today's Appointments" value="12" icon="📅" />
-            <StatCard title="Pending Check-ins" value="4" icon="⏰" />
-            <StatCard title="Pending Invoices" value="8" icon="📄" />
-            <StatCard title="Available Doctors" value="6" icon="👨‍⚕️" />
+            {/* TODO: Replace with API calls */}
+            {/* <StatCard title="Today's Appointments" value={stats?.todayAppointments || '0'} icon="📅" />
+            <StatCard title="Pending Check-ins" value={stats?.pendingCheckIns || '0'} icon="⏰" />
+            <StatCard title="Pending Invoices" value={stats?.pendingInvoices || '0'} icon="📄" />
+            <StatCard title="Available Doctors" value={stats?.availableDoctors || '0'} icon="👨‍⚕️" /> */}
+            <StatCard title="Today's Appointments" value="0" icon="📅" />
+            <StatCard title="Pending Check-ins" value="0" icon="⏰" />
+            <StatCard title="Pending Invoices" value="0" icon="📄" />
+            <StatCard title="Available Doctors" value="0" icon="👨‍⚕️" />
           </>
         )}
 
         {isTechnician && (
           <>
-            <StatCard title="Inventory Items" value="156" icon="📦" />
-            <StatCard title="Low Stock Items" value="8" icon="⚠️" />
-            <StatCard title="Patient Records" value="342" icon="📋" />
-            <StatCard title="Today's Tasks" value="5" icon="✅" />
+            {/* TODO: Replace with API calls */}
+            {/* <StatCard title="Inventory Items" value={stats?.inventoryItems || '0'} icon="📦" />
+            <StatCard title="Low Stock Items" value={stats?.lowStockItems || '0'} icon="⚠️" />
+            <StatCard title="Patient Records" value={stats?.patientRecords || '0'} icon="📋" />
+            <StatCard title="Today's Tasks" value={stats?.todayTasks || '0'} icon="✅" /> */}
+            <StatCard title="Inventory Items" value="0" icon="📦" />
+            <StatCard title="Low Stock Items" value="0" icon="⚠️" />
+            <StatCard title="Patient Records" value="0" icon="📋" />
+            <StatCard title="Today's Tasks" value="0" icon="✅" />
           </>
         )}
       </div>
@@ -188,26 +209,21 @@ export default function DashboardPage() {
           Recent Activity
         </h2>
         <div className="space-y-3">
-          <ActivityItem
-            title="New patient registered"
-            time="10 minutes ago"
-            icon="👤"
-          />
-          <ActivityItem
-            title="Appointment scheduled with Dr. Smith"
-            time="25 minutes ago"
-            icon="📅"
-          />
-          <ActivityItem
-            title="Payment received for Invoice #1234"
-            time="1 hour ago"
-            icon="💰"
-          />
-          <ActivityItem
-            title="Inventory updated: Dental Floss"
-            time="2 hours ago"
-            icon="📦"
-          />
+          {stats?.recentActivity && stats.recentActivity.length > 0 ? (
+            stats.recentActivity.map((activity, index) => (
+              <ActivityItem
+                key={index}
+                title={activity.title}
+                time={activity.time}
+                icon={activity.icon}
+              />
+            ))
+          ) : (
+            <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+              <p>No recent activity to display</p>
+              <p className="text-sm mt-1">Recent activities will appear here</p>
+            </div>
+          )}
         </div>
       </div>
     </div>

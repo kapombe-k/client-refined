@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import { useAuthContext } from '../contexts/authcontext';
 import { useNavigate } from 'react-router-dom';
+import { getDoctors } from '../api-calls/doctors';
+import { showToast } from '../components/ui/toast';
 
 export default function DoctorsPage() {
   const { isAuthenticated, loading } = useAuthContext();
@@ -18,14 +20,19 @@ export default function DoctorsPage() {
   }, [isAuthenticated, loading, navigate]);
 
   useEffect(() => {
-    // Use dummy data instead of API calls to prevent authentication issues
-    setDoctors([
-      { id: 1, name: 'Dr. Sarah Smith', specialty: 'General Dentistry', licenseNumber: 'D12345', phone: '555-0101', email: 'sarah.smith@clinic.com' },
-      { id: 2, name: 'Dr. Michael Johnson', specialty: 'Orthodontics', licenseNumber: 'D12346', phone: '555-0102', email: 'michael.johnson@clinic.com' },
-      { id: 3, name: 'Dr. Emily Davis', specialty: 'Pediatric Dentistry', licenseNumber: 'D12347', phone: '555-0103', email: 'emily.davis@clinic.com' },
-      { id: 4, name: 'Dr. Robert Lee', specialty: 'Oral Surgery', licenseNumber: 'D12348', phone: '555-0104', email: 'robert.lee@clinic.com' },
-    ]);
-    setLoadingDoctors(false);
+    const loadDoctors = async () => {
+      try {
+        const doctorsData = await getDoctors();
+        setDoctors(doctorsData);
+      } catch (error) {
+        console.error('Failed to load doctors:', error);
+        showToast('Failed to load doctors. Please try again.', 'error');
+        setDoctors([]);
+      } finally {
+        setLoadingDoctors(false);
+      }
+    };
+    loadDoctors();
   }, []);
 
   const filteredDoctors = doctors.filter((doctor) =>

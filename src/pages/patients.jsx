@@ -6,6 +6,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { getPatients, deletePatient } from '../api-calls/patients';
 import PatientProfileModal from '../components/PatientProfileModal';
 import AddPatientModal from '../components/AddPatientModal';
+import { showToast } from '../components/ui/toast';
 
 export default function PatientsPage() {
   const { isAuthenticated, loading } = useAuthContext();
@@ -21,15 +22,19 @@ export default function PatientsPage() {
 
 
   useEffect(() => {
-    // Use dummy data instead of API calls to prevent authentication issues
-    setPatients([
-      { id: 1, name: 'John Doe', email: 'john@example.com', phone: '555-0101', dateOfBirth: '1985-05-15', lastVisit: '2024-01-15' },
-      { id: 2, name: 'Jane Smith', email: 'jane@example.com', phone: '555-0102', dateOfBirth: '1990-08-22', lastVisit: '2024-01-20' },
-      { id: 3, name: 'Bob Johnson', email: 'bob@example.com', phone: '555-0103', dateOfBirth: '1978-03-10', lastVisit: '2024-01-18' },
-      { id: 4, name: 'Alice Brown', email: 'alice@example.com', phone: '555-0104', dateOfBirth: '1982-11-05', lastVisit: '2024-01-22' },
-      { id: 5, name: 'Charlie Wilson', email: 'charlie@example.com', phone: '555-0105', dateOfBirth: '1975-07-18', lastVisit: '2024-01-19' },
-    ]);
-    setLoadingPatients(false);
+    const loadPatients = async () => {
+      try {
+        const patientsData = await getPatients();
+        setPatients(patientsData);
+      } catch (error) {
+        console.error('Failed to load patients:', error);
+        showToast('Failed to load patients. Please try again.', 'error');
+        setPatients([]);
+      } finally {
+        setLoadingPatients(false);
+      }
+    };
+    loadPatients();
 
     if (searchParams.get('action') === 'new') {
       setShowModal(true);
@@ -55,13 +60,26 @@ export default function PatientsPage() {
     setPatients(prevPatients => [...prevPatients, newPatient]);
   };
 
+  const loadPatients = async () => {
+    try {
+      const patientsData = await getPatients();
+      setPatients(patientsData);
+    } catch (error) {
+      console.error('Failed to load patients:', error);
+      showToast('Failed to load patients. Please try again.', 'error');
+      setPatients([]);
+    }
+  };
+
   const handleDeletePatient = async (id) => {
     if (confirm('Are you sure you want to delete this patient?')) {
       try {
         await deletePatient(id);
-        loadPatients();
+        showToast('Patient deleted successfully', 'success');
+        loadPatients(); // Reload patients after deletion
       } catch (error) {
         console.error('Failed to delete patient:', error);
+        showToast('Failed to delete patient. Please try again.', 'error');
       }
     }
   };
