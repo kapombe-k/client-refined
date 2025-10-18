@@ -17,10 +17,7 @@ export const AuthProvider = ({ children }) => {
 
     const login = async (data) => {
         try {
-            console.log('Login attempt with data:', data);
             const res = await API.post('/auth/login', data);
-            console.log('Login response:', res);
-
             // Handle different response structures
             const userData = res.user || res.data?.user || res;
             setUser(userData);
