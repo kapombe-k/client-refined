@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { useAuthContext } from '../contexts/authcontext';
 import { useNavigate } from 'react-router-dom';
 import { getDoctors } from '../api-calls/doctors';
-import { showToast } from '../components/ui/toast';
 
 export default function DoctorsPage() {
   const { isAuthenticated, loading } = useAuthContext();
@@ -26,7 +25,6 @@ export default function DoctorsPage() {
         setDoctors(doctorsData);
       } catch (error) {
         console.error('Failed to load doctors:', error);
-        showToast('Failed to load doctors. Please try again.', 'error');
         setDoctors([]);
       } finally {
         setLoadingDoctors(false);

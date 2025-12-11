@@ -6,7 +6,6 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { getPatients, deletePatient } from '../api-calls/patients';
 import PatientProfileModal from '../components/PatientProfileModal';
 import AddPatientModal from '../components/AddPatientModal';
-import { showToast } from '../components/ui/toast';
 
 export default function PatientsPage() {
   const { isAuthenticated, loading } = useAuthContext();

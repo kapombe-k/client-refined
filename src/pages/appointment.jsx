@@ -5,7 +5,6 @@ import { useAuthContext } from '../contexts/authcontext';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { getAppointments } from '../api-calls/appointments';
 import AddAppointmentModal from '../components/AddAppointmentModal';
-import { showToast } from '../components/ui/toast';
 
 export default function AppointmentsPage() {
   const { isAuthenticated, loading } = useAuthContext();
@@ -25,7 +24,6 @@ export default function AppointmentsPage() {
         setAppointments(appointmentsData);
       } catch (error) {
         console.error('Failed to load appointments:', error);
-        showToast('Failed to load appointments. Please try again.', 'error');
         setAppointments([]);
       } finally {
         setLoadingAppointments(false);

@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useAuthContext } from '../contexts/authcontext';
 import { useNavigate } from 'react-router-dom';
-import { getDashboardAnalytics } from '../api-calls/analytics';
-import { showToast } from '../components/ui/toast';
 
 export default function DashboardPage() {
   const { user, isAuthenticated, loading, isAdmin, isDoctor, isReceptionist, isTechnician } = useAuthContext();
@@ -60,7 +58,6 @@ export default function DashboardPage() {
       }
     } catch (error) {
       console.error('Failed to load dashboard stats:', error);
-      showToast('Failed to load dashboard data. Using default values.', 'error');
 
       // Fallback to basic stats
       setStats({

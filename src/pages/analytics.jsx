@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import { useAuthContext } from '../contexts/authcontext';
 import { useNavigate } from 'react-router-dom';
-import { getAnalyticsData } from '../api-calls/analytics';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
 
 export default function AnalyticsPage() {

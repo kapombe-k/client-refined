@@ -1,37 +1,30 @@
 import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
 import { Link, useNavigate } from 'react-router-dom';
 import AuthLayout from '../layouts/authLayout';
-import { useAuth } from '../hooks/useauth';
-import { toast } from 'react-toastify';
-
-const schema = yup.object().shape({
-    email: yup.string().email('Invalid email format').required('Email is required'),
-    password: yup.string().required('Password is required'),
-});
+import { useAuthContext } from '../contexts/authcontext';
 
 const Login = () => {
-    const { login } = useAuth();
+    const { login, loading } = useAuthContext();
     const navigate = useNavigate();
-    const [isLoading, setIsLoading] = useState(false);
+    const [credentials, setCredentials] = useState({ email: '', password: '' });
+    const [error, setError] = useState('');
 
-    const { register, handleSubmit, formState: { errors } } = useForm({
-        resolver: yupResolver(schema)
-    });
+    const handleChange = (e) => {
+        setCredentials(prev => ({
+            ...prev,
+            [e.target.name]: e.target.value
+        }));
+    };
 
-    const onSubmit = async (data) => {
-        setIsLoading(true);
-        try {
-            await login(data);
-            toast.success('Login successful!');
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setError('');
+
+        const result = await login(credentials);
+        if (result.success) {
             navigate('/');
-        } catch (err) {
-            const errorMessage = err.response?.data?.message || err.response?.data?.error || 'Login failed!';
-            toast.error(errorMessage);
-        } finally {
-            setIsLoading(false);
+        } else {
+            setError(result.error || 'Login failed');
         }
     };
 
@@ -42,55 +35,57 @@ const Login = () => {
                 <p className="text-muted-foreground mt-2">Sign in to your account</p>
             </div>
 
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-foreground mb-1">
+                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
                         Email Address
                     </label>
                     <input
                         id="email"
+                        name="email"
                         type="email"
-                        {...register('email')}
-                        className={`w-full px-3 py-2 border border-input rounded-md shadow-sm bg-background focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring ${
-                            errors.email ? 'border-destructive' : ''
-                        }`}
+                        value={credentials.email}
+                        onChange={handleChange}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                         placeholder="Enter your email"
-                        disabled={isLoading}
+                        disabled={loading}
+                        required
                     />
-                    {errors.email && (
-                        <p className="mt-1 text-sm text-destructive">{errors.email.message}</p>
-                    )}
                 </div>
 
                 <div>
-                    <label htmlFor="password" className="block text-sm font-medium text-foreground mb-1">
+                    <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
                         Password
                     </label>
                     <input
                         id="password"
+                        name="password"
                         type="password"
-                        {...register('password')}
-                        className={`w-full px-3 py-2 border border-input rounded-md shadow-sm bg-background focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring ${
-                            errors.password ? 'border-destructive' : ''
-                        }`}
+                        value={credentials.password}
+                        onChange={handleChange}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                         placeholder="Enter your password"
-                        disabled={isLoading}
+                        disabled={loading}
+                        required
                     />
-                    {errors.password && (
-                        <p className="mt-1 text-sm text-destructive">{errors.password.message}</p>
-                    )}
                 </div>
+
+                {error && (
+                    <div className="text-red-600 text-sm text-center">
+                        {error}
+                    </div>
+                )}
 
                 <button
                     type="submit"
-                    disabled={isLoading}
-                    className={`w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-primary-foreground ${
-                        isLoading
-                            ? 'bg-primary/60 cursor-not-allowed'
-                            : 'bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2'
+                    disabled={loading}
+                    className={`w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${
+                        loading
+                            ? 'bg-blue-400 cursor-not-allowed'
+                            : 'bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
                     } transition duration-150 ease-in-out`}
                 >
-                    {isLoading ? 'Signing in...' : 'Sign In'}
+                    {loading ? 'Signing in...' : 'Sign In'}
                 </button>
             </form>
 

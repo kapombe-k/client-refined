@@ -1,47 +1,37 @@
 import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
 import { createResource, updateResource, deleteResource } from '../../api-calls/resources';
-import { toast } from 'react-toastify';
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogFooter,
-    DialogTrigger,
-    DialogClose,
-} from './dialog';
 
 const Modal = ({ resource, operation = 'create', initialData = {}, id, onSuccess }) => {
     const [open, setOpen] = useState(false);
-    const schema = yup.object().shape({
-        name: yup.string().required(),
-        // Add more fields as needed per resource
-    });
-    const { register, handleSubmit, reset, formState: { errors } } = useForm({
-        resolver: yupResolver(schema),
-        defaultValues: initialData
-    });
+    const [formData, setFormData] = useState(initialData);
+    const [loading, setLoading] = useState(false);
 
-    const onSubmit = async (data) => {
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setLoading(true);
         try {
             if (operation === 'create') {
-                await createResource(resource, data);
-                toast.success('Created successfully!');
+                await createResource(resource, formData);
+                alert('Created successfully!');
             } else if (operation === 'update') {
-                await updateResource(resource, id, data);
-                toast.success('Updated successfully!');
+                await updateResource(resource, id, formData);
+                alert('Updated successfully!');
             } else if (operation === 'delete') {
                 await deleteResource(resource, id);
-                toast.success('Deleted successfully!');
+                alert('Deleted successfully!');
             }
-            reset();
             setOpen(false);
             onSuccess?.();
-        } catch {
-            toast.error(`Failed to ${operation}!`);
+        } catch (error) {
+            alert(`Failed to ${operation}!`);
+            console.error(error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -51,52 +41,82 @@ const Modal = ({ resource, operation = 'create', initialData = {}, id, onSuccess
     else if (operation === 'delete') title = `Delete ${resource}`;
 
     return (
-        <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild>
-                <button className={`mb-4 px-4 py-2 rounded transition-colors ${
+        <>
+            <button
+                onClick={() => setOpen(true)}
+                className={`mb-4 px-4 py-2 rounded transition-colors ${
                     operation === 'delete'
-                        ? 'bg-destructive text-destructive-foreground hover:bg-destructive/90'
+                        ? 'bg-red-600 text-white hover:bg-red-700'
                         : operation === 'update'
-                        ? 'bg-primary text-primary-foreground hover:bg-primary/90'
-                        : 'bg-primary text-primary-foreground hover:bg-primary/90'
-                }`}>
-                    {operation === 'create' && 'Add New'}
-                    {operation === 'update' && 'Edit'}
-                    {operation === 'delete' && 'Delete'}
-                </button>
-            </DialogTrigger>
-            <DialogContent className="w-full max-w-md">
-                <DialogHeader>
-                    <DialogTitle>{title}</DialogTitle>
-                </DialogHeader>
-                {(operation === 'create' || operation === 'update') && (
-                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-                        <div>
-                            <label className="block mb-1 text-foreground">Name</label>
-                            <input {...register('name')} className="w-full border border-input bg-background px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring" />
-                            {errors.name && <span className="text-destructive">{errors.name.message}</span>}
+                        ? 'bg-blue-600 text-white hover:bg-blue-700'
+                        : 'bg-green-600 text-white hover:bg-green-700'
+                }`}
+            >
+                {operation === 'create' && 'Add New'}
+                {operation === 'update' && 'Edit'}
+                {operation === 'delete' && 'Delete'}
+            </button>
+
+            {open && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
+                        <div className="px-6 py-4 border-b border-gray-200">
+                            <h3 className="text-lg font-medium text-gray-900">{title}</h3>
                         </div>
-                        <DialogFooter>
-                            <DialogClose asChild>
-                                <button type="button" className="px-4 py-2 bg-secondary text-secondary-foreground rounded hover:bg-secondary/80 transition-colors">Cancel</button>
-                            </DialogClose>
-                            <button type="submit" className="px-4 py-2 bg-primary text-primary-foreground rounded hover:bg-primary/90 transition-colors">{operation === 'create' ? 'Create' : 'Update'}</button>
-                        </DialogFooter>
-                    </form>
-                )}
-                {operation === 'delete' && (
-                    <div>
-                        <p className="text-foreground">Are you sure you want to delete this {resource}?</p>
-                        <DialogFooter>
-                            <DialogClose asChild>
-                                <button className="px-4 py-2 bg-secondary text-secondary-foreground rounded hover:bg-secondary/80 transition-colors">Cancel</button>
-                            </DialogClose>
-                            <button onClick={onSubmit} className="px-4 py-2 bg-destructive text-destructive-foreground rounded hover:bg-destructive/90 transition-colors">Delete</button>
-                        </DialogFooter>
+                        {(operation === 'create' || operation === 'update') && (
+                            <form onSubmit={handleSubmit} className="px-6 py-4 space-y-4">
+                                <div>
+                                    <label className="block mb-1 text-gray-700">Name</label>
+                                    <input
+                                        name="name"
+                                        value={formData.name || ''}
+                                        onChange={handleInputChange}
+                                        className="w-full border border-gray-300 bg-white px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        required
+                                    />
+                                </div>
+                                <div className="flex justify-end space-x-3">
+                                    <button
+                                        type="button"
+                                        onClick={() => setOpen(false)}
+                                        className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 transition-colors"
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        disabled={loading}
+                                        className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors disabled:opacity-50"
+                                    >
+                                        {loading ? 'Saving...' : (operation === 'create' ? 'Create' : 'Update')}
+                                    </button>
+                                </div>
+                            </form>
+                        )}
+                        {operation === 'delete' && (
+                            <div className="px-6 py-4">
+                                <p className="text-gray-700 mb-4">Are you sure you want to delete this {resource}?</p>
+                                <div className="flex justify-end space-x-3">
+                                    <button
+                                        onClick={() => setOpen(false)}
+                                        className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 transition-colors"
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button
+                                        onClick={handleSubmit}
+                                        disabled={loading}
+                                        className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors disabled:opacity-50"
+                                    >
+                                        {loading ? 'Deleting...' : 'Delete'}
+                                    </button>
+                                </div>
+                            </div>
+                        )}
                     </div>
-                )}
-            </DialogContent>
-        </Dialog>
+                </div>
+            )}
+        </>
     );
 };
 

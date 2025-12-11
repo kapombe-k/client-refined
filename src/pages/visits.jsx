@@ -5,7 +5,6 @@ import { useAuthContext } from '../contexts/authcontext';
 import { useNavigate } from 'react-router-dom';
 import PatientProfileModal from '../components/PatientProfileModal';
 import { getVisits, createVisit, updateVisit, deleteVisit } from '../api-calls/visits';
-import { showToast } from '../components/ui/toast';
 
 export default function VisitsPage() {
   const { isAuthenticated, loading, isAdmin, user } = useAuthContext();

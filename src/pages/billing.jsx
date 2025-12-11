@@ -5,7 +5,6 @@ import { useAuthContext } from '../contexts/authcontext';
 import { useNavigate } from 'react-router-dom';
 import AddBillingModal from '../components/AddBillingModal';
 import { getBillings } from '../api-calls/billings';
-import { showToast } from '../components/ui/toast';
 
 export default function BillingPage() {
   const { isAuthenticated, loading } = useAuthContext();

@@ -25,7 +25,8 @@ export const AuthProvider = ({ children }) => {
             return res;
         } catch (error) {
             console.error('Login error in context:', error);
-            throw error;
+            const errorMessage = error.response?.data?.message || 'Login failed';
+            return { success: false,error: errorMessage };
         }
     };
 

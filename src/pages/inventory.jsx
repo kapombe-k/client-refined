@@ -5,7 +5,6 @@ import { useAuthContext } from '../contexts/authcontext';
 import { useNavigate } from 'react-router-dom';
 import AddInventoryModal from '../components/AddInventoryModal';
 import { getInventory } from '../api-calls/inventory';
-import { showToast } from '../components/ui/toast';
 
 export default function InventoryPage() {
   const { isAuthenticated, loading } = useAuthContext();
@@ -27,7 +26,6 @@ export default function InventoryPage() {
         setInventory(inventoryData);
       } catch (error) {
         console.error('Failed to load inventory:', error);
-        showToast('Failed to load inventory. Please try again.', 'error');
         setInventory([]);
       } finally {
         setLoadingInventory(false);

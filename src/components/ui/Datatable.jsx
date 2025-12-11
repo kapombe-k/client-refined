@@ -1,14 +1,9 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { AgGridReact } from 'ag-grid-react';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-alpine.css';
+import React, { useState, useEffect } from 'react';
 import { getResource } from '../../api-calls/resources';
 import { searchPatients } from '../../api-calls/patients';
 import { searchAppointments } from '../../api-calls/appointments';
 import { searchDoctors } from '../../api-calls/doctors';
 import Loader from './loader';
-import { toast } from 'react-toastify';
 import Modal from './modal';
 
 const ActionCellRenderer = ({ data, onEdit, onDelete }) => {
@@ -31,31 +26,47 @@ const ActionCellRenderer = ({ data, onEdit, onDelete }) => {
 };
 
 const DataTable = ({ resource, searchParams = {} }) => {
-    const queryClient = useQueryClient();
-
-    // Choose the appropriate API function based on resource type
-    const getDataFunction = () => {
-        if (Object.keys(searchParams).length > 0) {
-            switch (resource) {
-                case 'patients':
-                    return searchPatients(searchParams);
-                case 'appointments':
-                    return searchAppointments(searchParams);
-                case 'doctors':
-                    return searchDoctors(searchParams);
-                default:
-                    return getResource(resource);
-            }
-        }
-        return getResource(resource);
-    };
-
-    const queryKey = Object.keys(searchParams).length > 0 ? [resource, searchParams] : [resource];
-    const { data, isLoading, error } = useQuery({
-        queryKey,
-        queryFn: getDataFunction
-    });
+    const [data, setData] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     const [modalState, setModalState] = useState({ open: false, operation: '', data: {}, id: null });
+
+    useEffect(() => {
+        loadData();
+    }, [resource, searchParams]);
+
+    const loadData = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+
+            let result;
+            if (Object.keys(searchParams).length > 0) {
+                switch (resource) {
+                    case 'patients':
+                        result = await searchPatients(searchParams);
+                        break;
+                    case 'appointments':
+                        result = await searchAppointments(searchParams);
+                        break;
+                    case 'doctors':
+                        result = await searchDoctors(searchParams);
+                        break;
+                    default:
+                        result = await getResource(resource);
+                }
+            } else {
+                result = await getResource(resource);
+            }
+
+            setData(Array.isArray(result) ? result : result[resource] || []);
+        } catch (err) {
+            setError('Failed to load data');
+            console.error('Error loading data:', err);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const handleEdit = (rowData) => {
         setModalState({ open: true, operation: 'update', data: rowData, id: rowData.id });
@@ -70,56 +81,52 @@ const DataTable = ({ resource, searchParams = {} }) => {
     };
 
     const onMutationSuccess = () => {
-        queryClient.invalidateQueries({ queryKey: [resource] });
+        loadData(); // Reload data after mutation
         closeModal();
     };
 
-    // Handle different data structures from search vs basic endpoints
-    const tableData = useMemo(() => {
-        if (!data) return [];
-        // If data has the search response structure, extract the array
-        if (data[resource]) {
-            return data[resource];
-        }
-        // Otherwise, assume it's the direct array
-        return Array.isArray(data) ? data : [];
-    }, [data, resource]);
+    if (loading) return <Loader />;
 
-    const columnDefs = useMemo(() => {
-        if (!tableData || !tableData.length) return [];
-        const keys = Object.keys(tableData[0]);
-        const cols = keys.map(key => ({
-            field: key,
-            headerName: key.charAt(0).toUpperCase() + key.slice(1),
-            sortable: true,
-            filter: true
-        }));
-        cols.push({
-            headerName: 'Actions',
-            cellRenderer: (params) => <ActionCellRenderer data={params.data} onEdit={handleEdit} onDelete={handleDelete} />,
-            width: 150
-        });
-        return cols;
-    }, [tableData]);
+    if (error) {
+        return <div className="text-red-600 p-4 bg-red-50 rounded-lg border border-red-200">Error loading data</div>;
+    }
 
-    if (isLoading) return <Loader />;
-    // Handle error state
-        if (error) {
-            toast.error('Failed to load data');
-            return <div className="text-destructive p-4 bg-destructive/10 rounded-lg border border-destructive/20">Error loading data</div>;
-        }
-    
+    if (!data || !data.length) {
+        return <div className="text-gray-500 p-4 bg-gray-50 rounded-lg">No records found.</div>;
+    }
 
-    if (!tableData || !tableData.length) return <div className="text-muted-foreground p-4 bg-muted/50 rounded-lg">No records found.</div>;
+    const columns = Object.keys(data[0]).filter(key => key !== 'id');
 
     return (
-        <div className="ag-theme-alpine" style={{ height: 400, width: '100%' }}>
-            <AgGridReact
-                rowData={tableData}
-                columnDefs={columnDefs}
-                pagination={true}
-                paginationPageSize={10}
-            />
+        <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                    <tr>
+                        {columns.map(col => (
+                            <th key={col} className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                {col.charAt(0).toUpperCase() + col.slice(1)}
+                            </th>
+                        ))}
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Actions
+                        </th>
+                    </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                    {data.map((row, index) => (
+                        <tr key={row.id || index} className="hover:bg-gray-50">
+                            {columns.map(col => (
+                                <td key={col} className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    {row[col]}
+                                </td>
+                            ))}
+                            <td className="px-6 py-4 whitespace-nowrap text-sm">
+                                <ActionCellRenderer data={row} onEdit={handleEdit} onDelete={handleDelete} />
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
             {modalState.open && (
                 <Modal
                     resource={resource}
